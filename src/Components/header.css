@@ -7,10 +7,11 @@
 } */
 #header {
   font-family: Impact, sans-serif;
+  height: 100px;
   padding: 1.5rem 15px;
   display: flex;
   flex-direction: row;
-  /* align-items: flex-start; */
+  align-items: center;
   justify-content: space-between;
   background-color: var(--tertiary-color) !important;
   box-shadow: 0 1px 9px rgba(0, 0, 0, 0.5);
