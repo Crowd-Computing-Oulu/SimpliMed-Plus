@@ -1,38 +1,373 @@
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
 .App {
-  text-align: center;
+  /* text-align: center; */
+  min-width: 450px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+@import url("https://unpkg.com/style.css/style.css");
+@import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,600;1,100;1,400&family=Orbitron:wght@600&family=Unbounded&display=swap");
+:root {
+  --primary-color: #3d8aa4;
+  --secondary-color: #543884;
+  --tertiary-color: #e2f0f7;
+  --primary-font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --secondary-font: "Kanit", sans-serif;
+}
+body {
+  overflow-y: scroll;
+}
+* {
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.hidden {
+  display: none !important;
+}
+.btn {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 8px 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 100px;
+  font-family: var(--secondary-font);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.btn:hover {
+  background-color: var(--secondary-color) !important;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.flex-col {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+
+.dailyPhrase {
+  font-weight: bold;
+  font-family: var(--secondary-font);
+}
+#header {
+  font-family: Impact, sans-serif;
+  padding: 1.5rem 15px;
+  display: flex;
+  flex-direction: row;
+  /* align-items: flex-start; */
+  justify-content: space-between;
+  background-color: var(--tertiary-color);
+  box-shadow: 0 1px 9px rgba(0, 0, 0, 0.5);
+}
+#header p {
+  margin: 0;
+}
+
+#header span {
+  margin-right: 10px;
+}
+#remainingFeedbacks {
+  font-size: 0.9rem;
+  color: gray;
+  font-family: var(--primary-font);
+}
+#header #header-username {
+  font-family: Impact, sans-serif;
+  color: var(--secondary-color);
+
+  font-size: 1.2rem;
+}
+.instructions-container {
+  padding: 5% 5%;
+  font-size: 1rem;
+  font-family: var(--primary-font);
+}
+.logoutIcon-container {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background-color: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logoutIcon-container:hover {
+  cursor: pointer;
+  background-color: red !important;
+}
+.logoutIcon-container i {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.tooltip,
+.tooltipUsername {
+  position: relative;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.tooltip .tooltipText,
+.tooltipUsername .tooltipUsernameText {
+  visibility: hidden;
+  font-family: sans-serif;
+  font-weight: normal;
+  background-color: #c2c0c0;
+  color: #010101;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltipText,
+.tooltipUsername:hover .tooltipUsernameText {
+  visibility: visible;
+  opacity: 1;
+}
+
+#getAbstract {
+  padding: 5px 10px;
+  background-color: var(--primary-color);
+  color: white;
+  margin: 0;
+  font-size: 0.8rem;
+  position: relative;
+}
+#getAbstract:hover {
+  background-color: var(--primary-color);
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 40rem !important;
+}
+
+.closeBtn {
+  background-color: var(--secondary-color);
+  color: white;
+  font-weight: bold;
+  /* margin: 1.9rem 15px; */
+  /* padding: 10px; */
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  /* position: fixed; */
+  /* top: 0; */
+  /* right: 0; */
+}
+.closeBtn:hover {
+  cursor: pointer;
+  background-color: var(--primary-color);
+}
+.confirm-message {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: rgba(2, 80, 23, 0.514);
+  padding: 1rem;
+}
+
+div.main-content {
+  padding: 0 5%;
+  text-align: justify;
+}
+
+h2 {
+  font-size: 1.3rem;
+}
+h4.original-title,
+h4.summary-title {
+  width: 100%;
+  /* margin-top: 0; */
+  color: var(--secondary-color);
+  margin: 1.25rem 0;
+  font-size: 1.15rem;
+}
+p {
+  width: 100%;
+  font-size: 1rem;
+}
+
+#difficulty-lvl {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 0;
+  width: 100%;
+  /* background-color: rgb(220, 221, 221); */
+  /* background-color: var(--tertiary-color); */
+
+  /* background-color: var(--primary-color);
+  color: white; */
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+  font-family: var(--secondary-font);
+
+  /* to flow outside of the parent  */
+  position: relative;
+  left: -6%;
+  width: 112%;
+}
+#difficulty-lvl_instructions {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-family: var(--primary-font);
+}
+.difficulty-lvl__title {
+  font-size: 1rem;
+  padding-right: 1rem;
+  font-style: italic;
+}
+datalist {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  writing-mode: horizontal-lr;
+  width: 200px;
+}
+
+option {
+  padding: 0;
+}
+input[type="range"] {
+  width: 400px;
+}
+
+/* .slider {
+  color: blue;
+  border-radius: 50px;
+} */
+#tickmarks option {
+  margin-right: 50px;
+}
+
+/* FEEDBACK VALUES  */
+.feedbackValue-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* background-color: white; */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  /* max-width: 400px; */
+  /* margin: 0 auto; */
+  position: relative;
+  /* margin-bottom: 1.2rem; */
+  padding: 1rem 1.2rem;
+  background-color: var(--tertiary-color);
+  font-family: var(--secondary-font);
+}
+.feedbackValue-container p {
+  margin: 0;
+  /* margin-top: 20px; */
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--secondary-color);
+}
+.checkboxgroup {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px 20px;
+}
+#feedbackValueForm {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 350px;
+}
+#feedbackValueForm > button {
+  margin: 0;
+}
+#feedbackValueForm > div {
+  display: flex;
+  flex-direction: row;
+}
+
+.checkboxgroup label {
+  display: block;
+  text-align: center;
+}
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* Create custom radio button style */
+input[type="radio"]:before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #43406c72;
+  margin-right: 5px; /* Add spacing between the button and label */
+}
+
+/* Style the radio button when selected */
+input[type="radio"]:checked:before {
+  background-color: var(--primary-color);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6); /* Add shadow effect */
+}
+
+.feedbackText-container textarea {
+  width: 350px;
+  height: 150px;
+  border: solid 1px;
+  background-color: var(--tertiary-color);
+  padding: 1rem;
+  font-size: 1rem;
+}
+.feedbackText-container .feedbackText-description {
+  color: var(--secondary-color);
+  font-weight: bold;
+  font-family: var(--secondary-font);
+}
+.feedbackText-container button {
+  background-color: var(--secondary-color);
+}
+.feedbackText-container button:hover {
+  background-color: var(--primary-color) !important;
+}
+#feedbackSubmisisonResult {
+  padding: 1rem 1rem;
+  /* text-justify: auto; */
+  /* margin: 0 1%; */
+  font-family: var(--secondary-font);
+  color: green;
+}
+
+/*  Main Study  */
+.question-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.question-container .question {
+  margin-top: 1rem;
+  color: var(--secondary-color);
+  font-weight: bold;
+  font-family: var(--secondary-font);
+  max-width: 80%;
 }
