@@ -11,8 +11,8 @@ function App() {
   return (
     <>
       <Header />
-      <Login />
-      <Instructions />
+      {/* <Login /> */}
+      {/* <Instructions /> */}
       <Abstracts />
 
       {/* <Loading /> */}
