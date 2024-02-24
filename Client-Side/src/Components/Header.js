@@ -1,10 +1,13 @@
 import React from "react";
 import "./header.css";
 export default function Header() {
+  function getAbstract() {
+    console.log("Get abstract has been clicked");
+  }
   return (
     <div id="header" className="hiddenn">
       <div>
-        <button id="getAbstract" classNameName="btn hidden">
+        <button id="getAbstract" className="btn hiddenn" onClick={getAbstract}>
           Get Abstract
         </button>
         <span id="remainingFeedbacks"></span>

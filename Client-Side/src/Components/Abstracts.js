@@ -1,7 +1,8 @@
 import React from "react";
 import "./abstracts.css";
 
-export default function Abstracts() {
+export default function Abstracts(props) {
+  console.log(props.abstract);
   return (
     <div className="main-content hiddenn" id="main-content">
       <div id="difficulty-lvl" className="">
@@ -54,7 +55,7 @@ export default function Abstracts() {
         </ol>
       </div>
       <div id="abstract-container">
-        <h4 className="original-title">test</h4>
+        <h4 className="original-title">{props.abstract.originalText}</h4>
         <h4 className="summary-title">test</h4>
         <p className="elementary-abs">test</p>
         <p className="advanced-abs">test</p>
