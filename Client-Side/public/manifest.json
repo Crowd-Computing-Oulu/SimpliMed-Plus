@@ -9,7 +9,8 @@
   "browser_action": {
     "default_title": "Click to open panel"
   },
-  "permissions": ["activeTab", "tabs", "sidePanel"],
+  "permissions": ["activeTab", "tabs", "sidePanel", "scripting"],
+  "host_permissions": ["http://*/", "https://*/"],
   "side_panel": {
     "default_path": "generated-sidepanel.html"
   },
