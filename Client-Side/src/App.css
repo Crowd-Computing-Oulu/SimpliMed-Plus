@@ -2,7 +2,7 @@
 
 .App {
   /* text-align: center; */
-  min-width: 450px;
+  /* min-width: 450px; */
 }
 
 @import url("https://unpkg.com/style.css/style.css");
@@ -15,7 +15,8 @@
   --secondary-font: "Kanit", sans-serif;
 }
 body {
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
+  min-width: 450px;
 }
 * {
   border: 0;

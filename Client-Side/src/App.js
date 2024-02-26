@@ -7,8 +7,9 @@ import Loading from "./Components/Loading";
 import Login from "./Components/Login";
 import Instructions from "./Components/Instructions";
 import Abstracts from "./Components/Abstracts";
+import AiAgent from "./Components/AiAgent";
+
 async function getTabInformation(currentTab) {
-  console.log("i am inside tab infromation");
   const response = await fetch(currentTab.url);
   const text = await response.text();
   const parser = new DOMParser();
@@ -28,9 +29,15 @@ async function getTabInformation(currentTab) {
   return { originalText: originalText, originalTitle: originalTitle };
 }
 function App() {
+  const [username, setUsername] = React.useState("");
   const [currentTab, setCurrentTab] = React.useState(null);
   const [abstract, setAbstract] = React.useState(null);
 
+  // callback function to receive the username from Login component
+  function handleLoginChange(submittedUsername) {
+    console.log("the username should be updated here");
+    setUsername(submittedUsername);
+  }
   React.useEffect(() => {
     const fetchTabData = async () => {
       try {
@@ -53,19 +60,22 @@ function App() {
     fetchTabData();
   }, []);
 
+  // Login
+
   return (
-    <>
+    <div className="App">
       <Header />
-      {/* <Login /> */}
+      <Login onStateChange={handleLoginChange} />
       {/* <Instructions /> */}
-      {abstract && <Abstracts abstract={abstract} />}
+      {/* {abstract && <Abstracts abstract={abstract} />} */}
+      <AiAgent />
+
       {/* <Abstracts abstract={abstract} /> */}
 
       {/* <Loading /> */}
-      <div className="App">
-        {/* <h1 className="app-blue">RReady to build the SimpliMed plus</h1> */}
-      </div>
-    </>
+
+      {/* <h1 className="app-blue">RReady to build the SimpliMed plus</h1> */}
+    </div>
   );
 }
 

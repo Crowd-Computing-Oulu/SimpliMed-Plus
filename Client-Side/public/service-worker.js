@@ -1,38 +1,51 @@
-// /*global chrome*/
+/*global chrome*/
 
-// chrome.runtime.onMessage.addListener(async function (
-//   request,
-//   sender,
-//   sendResponse
-// ) {
-//   if (request.action === "currentTab") {
-//     console.log("I got the currentTab in the worker ", request.currentTab);
-//     const response = await fetch(request.currentTab.url);
-//     // console.log(response);
-//     const text = await response.text();
-//     // console.log(text);
-//     const parser = new DOMParser();
+chrome.runtime.onMessage.addListener(async function (
+  message,
+  sender,
+  sendResponse
+) {
+  if (message.action === "submitUserQuestion") {
+    let result = await submitUserQuestion(message.userQuestion);
+    console.log(result);
+  }
+});
 
-//     // coverting html into a document
-//     const doc = parser.parseFromString(text, "text/html");
-//     // console.log(doc);
+// Request User Question to AI
+async function submitUserQuestion(userQuestion) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get("accessToken", async function (data) {
+      const accessToken = data.accessToken;
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "JWT " + accessToken,
+        },
+        body: JSON.stringify({
+          userQuestion: userQuestion,
+        }),
+      };
 
-//     // Specify the target where you want to inject the script
-//     const target = { tabId: request.currentTab.id };
-//     const scriptCode = "document.documentElement.outerHTML";
-//     chrome.scripting
-//       .executeScript({
-//         target: target,
-//         func: () => "document.documentElement.outerHTML", // Use a function that returns the script code
-//       })
-//       .then((injectionResults) => {
-//         // Handle the results of the script execution
-//         for (const { frameId, result } of injectionResults) {
-//           console.log(`Frame ${frameId} result:`, result);
-//         }
-//       })
-//       .catch((error) => {
-//         console.error("Error executing script:", error);
-//       });
-//   }
-// });
+      try {
+        const response = await fetch(
+          `http://localhost:8080/users/questions`,
+          options
+        );
+        let responseData = await response.json();
+        if (response.status == 200) {
+          let result = {};
+          // adding the interactionId in abstractData
+          //   responseData.abstract.interactionID = responseData.interactionId;
+          //   result.abstract = responseData.abstract;
+          //   result.feedback = responseData.feedback;
+          resolve(result);
+        } else {
+          reject({ message: responseData.message });
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+}
