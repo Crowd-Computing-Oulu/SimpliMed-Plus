@@ -1,13 +1,12 @@
-/*global chrome*/
-
-import React from "react";
+import React, { useEffect } from "react";
 import "./login.css";
 
 export default function Login({ onStateChange }) {
   const [username, setUsername] = React.useState("");
+
   function submitUsername() {
     // the callback function provided by the parent
-    // chrome.runtime.sendMessage({ action: "login", username });
+    // Username will be sent to the parent
     onStateChange(username);
   }
   return (

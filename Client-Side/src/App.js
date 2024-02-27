@@ -1,5 +1,5 @@
 /*global chrome*/
-// import logo from './logo.svg';
+
 import React from "react";
 import "./App.css";
 import Header from "./Components/Header";
@@ -8,6 +8,8 @@ import Login from "./Components/Login";
 import Instructions from "./Components/Instructions";
 import Abstracts from "./Components/Abstracts";
 import AiAgent from "./Components/AiAgent";
+
+// var port = chrome.runtime.connect({ name: "popupConnection" });
 
 async function getTabInformation(currentTab) {
   const response = await fetch(currentTab.url);
@@ -25,19 +27,54 @@ async function getTabInformation(currentTab) {
   var originalTitle = doc
     .getElementsByClassName("heading-title")[0]
     .textContent.trim();
-  console.log(originalTitle, originalText);
+  // console.log(originalTitle, originalText);
   return { originalText: originalText, originalTitle: originalTitle };
 }
+
 function App() {
-  const [username, setUsername] = React.useState("");
+  const [username, setUsername] = React.useState(null);
+
+  const [accessToken, setAccessToken] = React.useState(null);
+  const [state, setState] = React.useState(null);
+  // console.log(state);
   const [currentTab, setCurrentTab] = React.useState(null);
   const [abstract, setAbstract] = React.useState(null);
+
+  chrome.runtime.onMessage.addListener(async function (
+    message,
+    sender,
+    sendResponse
+  ) {
+    if (message.action === "updateState") {
+      console.log("state will be updated in the front");
+      console.log("state:", message.state);
+      setState(message.state);
+      // if (!message.state.accessToken) {
+      //   setAccessToken(null);
+      // }
+      // console.log(state);
+    }
+  });
+
+  React.useEffect(() => {
+    // Sending the username to the service worker if there is any
+    if (username !== null) {
+      chrome.runtime.sendMessage(
+        { action: "loginRequest", username }
+        // (response) => {
+        //   console.log("I am the response", response.response);
+        // }
+      );
+      // console.log("I am the username insde the app component", username);
+    }
+  }, [username]);
 
   // callback function to receive the username from Login component
   function handleLoginChange(submittedUsername) {
     console.log("the username should be updated here");
     setUsername(submittedUsername);
   }
+
   React.useEffect(() => {
     const fetchTabData = async () => {
       try {
@@ -47,7 +84,6 @@ function App() {
         });
         const currentTab = tabs[0];
         setCurrentTab(currentTab);
-        console.log(currentTab);
         const abstractInfo = await getTabInformation(currentTab);
         setAbstract(abstractInfo);
         // Send a message to background script to get tab information and HTML content
@@ -60,15 +96,27 @@ function App() {
     fetchTabData();
   }, []);
 
-  // Login
+  chrome.storage.local.get("accessToken", (data) => {
+    if (data.accessToken) {
+      setAccessToken(data.accessToken);
+    }
+    // console.log("Access token from storage is", accessToken);
+    // You can perform further operations with the accessToken here
+  });
 
   return (
     <div className="App">
-      <Header />
-      <Login onStateChange={handleLoginChange} />
+      {state && state.accessToken ? (
+        <>
+          <Header state={state} />
+          <AiAgent />
+        </>
+      ) : (
+        <Login onStateChange={handleLoginChange} />
+      )}
+
       {/* <Instructions /> */}
-      {/* {abstract && <Abstracts abstract={abstract} />} */}
-      <AiAgent />
+      {/* {abstract && <Abstracts abstract={abstract}  />} */}
 
       {/* <Abstracts abstract={abstract} /> */}
 
