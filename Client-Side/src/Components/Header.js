@@ -1,13 +1,31 @@
+/*global chrome */
 import React from "react";
 import "./header.css";
-export default function Header() {
+// import "bootstrap-icons/font/bootstrap-icons.css";
+import { DoorClosed } from "react-bootstrap-icons";
+export default function Header({ state }) {
   function getAbstract() {
     console.log("Get abstract has been clicked");
   }
+  function logout() {
+    // onStateChange();
+    console.log("will send this message for logout");
+    chrome.runtime.sendMessage(
+      { action: "logoutRequest" }
+      // function (response) {
+      //   console.log("this is the response in Header", response);
+      // }
+    );
+  }
+
   return (
-    <div id="header" className="hiddenn">
+    <div id="header" className="hiddenn header">
       <div>
-        <button id="getAbstract" className="btn hiddenn" onClick={getAbstract}>
+        <button
+          id="getAbstract "
+          className=" hiddenn button "
+          onClick={getAbstract}
+        >
           Get Abstract
         </button>
         <span id="remainingFeedbacks"></span>
@@ -15,11 +33,17 @@ export default function Header() {
 
       <div className="flex-row">
         <span id="header-username" className="tooltipUsername">
-          Prolific Username
+          {state.username}
           <span className="tooltipUsernameText">Prolific Username</span>
         </span>
-        <span className="logoutIcon-container tooltip" id="logoutBtn">
-          <i className="fas fa-sign-out-alt"></i>
+        <span
+          onClick={logout}
+          className="logoutIcon-container tooltip"
+          id="logoutBtn"
+        >
+          <i className="bi bi-box-arrow-right"></i>
+          <DoorClosed size="1.4rem" color="white" />
+          {/* <i className="fas fa-sign-out-alt"></i> */}
           <span className="tooltipText">Logout</span>
         </span>
       </div>
