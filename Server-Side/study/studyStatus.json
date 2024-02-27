@@ -1,282 +1,158 @@
 {
   "phases": {
-    "2023-12-01": {
-      "phrase": "An apple a day, keeps the cancer away.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-02": {
-      "phrase": "An apple a day, keeps the cancer away.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-03": {
-      "phrase": "An apple a day, keeps the cancer away.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-04": {
-      "phrase": "An apple a day, keeps the cancer away.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-05": {
-      "phrase": "Standing too close to the microwave can cause cancer.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-06": {
-      "phrase": "Cracking your knuckles leads to arthritis.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-07": {
-      "phrase": "Autism disorder is a result of childhood vaccinations.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-08": {
+    "2023-03-01": {
       "phrase": "Suger substitudes can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2023-12-09": {
-      "phrase": "Cracking your knuckles leads to arthritis.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-10": {
-      "phrase": "An apple a day, keeps the cancer away.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-11": {
-      "phrase": "Standing too close to the microwave can cause cancer.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-12": {
-      "phrase": "Cracking your knuckles leads to arthritis.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-13": {
+    "2024-03-02": {
       "phrase": "Autism disorder is a result of childhood vaccinations.",
       "requiredFeedbacks": 1
     },
-    "2023-12-14": {
-      "phrase": "Suger substitudes can cause cancer.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-15": {
-      "phrase": "Cracking your knuckles leads to arthritis.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-16": {
-      "phrase": "An apple a day, keeps the cancer away.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-17": {
-      "phrase": "Standing too close to the microwave can cause cancer.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-18": {
-      "phrase": "Cracking your knuckles leads to arthritis.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-19": {
-      "phrase": "Autism disorder is a result of childhood vaccinations.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-20": {
-      "phrase": "Cracking your knuckles leads to arthritis.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-21": {
-      "phrase": "Suger substitudes can cause cancer.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-22": {
-      "phrase": "An apple a day, keeps the cancer away.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-23": {
-      "phrase": "Standing too close to the microwave can cause cancer.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-24": {
-      "phrase": "Cracking your knuckles leads to arthritis.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-25": {
-      "phrase": "Autism disorder is a result of childhood vaccinations.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-26": {
-      "phrase": "Suger substitudes can cause cancer.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-27": {
-      "phrase": "Cracking your knuckles leads to arthritis.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-28": {
-      "phrase": "An apple a day, keeps the cancer away.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-29": {
-      "phrase": "Standing too close to the microwave can cause cancer.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-30": {
-      "phrase": "Cracking your knuckles leads to arthritis.",
-      "requiredFeedbacks": 1
-    },
-    "2023-12-31": {
-      "phrase": "Suger substitudes can cause cancer.",
-      "requiredFeedbacks": 1
-    },
-    "2024-01-01": {
-      "phrase": "Autism disorder is a result of childhood vaccinations.",
-      "requiredFeedbacks": 1
-    },
-    "2024-01-02": {
-      "phrase": "Cracking your knuckles leads to arthritis.",
-      "requiredFeedbacks": 1
-    },
-    "2024-01-03": {
+    "2024-03-03": {
       "phrase": "Suger substitudes can cause cancer",
       "requiredFeedbacks": 1
     },
-    "2024-01-04": {
+    "2024-03-04": {
       "phrase": "An apple a day, keeps the cancer away.",
       "requiredFeedbacks": 1
     },
-    "2024-01-05": {
+    "2024-03-05": {
       "phrase": "Standing too close to the microwave can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-01-06": {
+    "2024-03-06": {
       "phrase": "Cracking your knuckles leads to arthritis.",
       "requiredFeedbacks": 1
     },
-    "2024-01-07": {
+    "2024-03-07": {
       "phrase": "Autism disorder is a result of childhood vaccinations.",
       "requiredFeedbacks": 1
     },
-    "2024-01-08": {
+    "2024-03-08": {
       "phrase": "Cracking your knuckles leads to arthritis.",
       "requiredFeedbacks": 1
     },
-    "2024-01-09": {
+    "2024-03-09": {
       "phrase": "Suger substitudes can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-01-10": {
+    "2024-03-10": {
       "phrase": "An apple a day, keeps the cancer away.",
       "requiredFeedbacks": 1
     },
-    "2024-01-11": {
+    "2024-03-11": {
       "phrase": "Standing too close to the microwave can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-01-12": {
+    "2024-03-12": {
       "phrase": "Suger substitudes can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-01-13": {
+    "2024-03-13": {
       "phrase": "Autism disorder is a result of childhood vaccinations.",
       "requiredFeedbacks": 1
     },
-    "2024-01-14": {
+    "2024-03-14": {
       "phrase": "Cracking your knuckles leads to arthritis.",
       "requiredFeedbacks": 1
     },
-    "2024-01-15": {
+    "2024-03-15": {
       "phrase": "An apple a day, keeps the cancer away.",
       "requiredFeedbacks": 1
     },
-    "2024-01-16": {
+    "2024-03-16": {
       "phrase": "Standing too close to the microwave can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-01-17": {
+    "2024-03-17": {
       "phrase": "Suger substitudes can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-01-18": {
+    "2024-03-18": {
       "phrase": "Autism disorder is a result of childhood vaccinations.",
       "requiredFeedbacks": 1
     },
-    "2024-01-19": {
+    "2024-03-19": {
       "phrase": "Cracking your knuckles leads to arthritis.",
       "requiredFeedbacks": 1
     },
-    "2024-01-20": {
+    "2024-03-20": {
       "phrase": "An apple a day, keeps the cancer away.",
       "requiredFeedbacks": 1
     },
-    "2024-01-21": {
+    "2024-03-21": {
       "phrase": "Standing too close to the microwave can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-01-22": {
+    "2024-03-22": {
       "phrase": "Suger substitudes can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-01-23": {
+    "2024-03-23": {
       "phrase": "Autism disorder is a result of childhood vaccinations.",
       "requiredFeedbacks": 1
     },
-    "2024-01-24": {
+    "2024-03-24": {
       "phrase": "Cracking your knuckles leads to arthritis.",
       "requiredFeedbacks": 1
     },
-    "2024-01-25": {
+    "2024-03-25": {
       "phrase": "An apple a day, keeps the cancer away.",
       "requiredFeedbacks": 1
     },
-    "2024-01-26": {
+    "2024-03-26": {
       "phrase": "Standing too close to the microwave can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-01-27": {
+    "2024-03-27": {
       "phrase": "Suger substitudes can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-01-28": {
+    "2024-03-28": {
       "phrase": "Autism disorder is a result of childhood vaccinations.",
       "requiredFeedbacks": 1
     },
-    "2024-01-29": {
+    "2024-03-29": {
       "phrase": "Cracking your knuckles leads to arthritis.",
       "requiredFeedbacks": 1
     },
-    "2024-01-30": {
+    "2024-03-30": {
       "phrase": "An apple a day, keeps the cancer away.",
       "requiredFeedbacks": 1
     },
-    "2024-01-31": {
+    "2024-03-31": {
       "phrase": "Standing too close to the microwave can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-02-01": {
+    "2024-04-01": {
       "phrase": "Autism disorder is a result of childhood vaccinations.",
       "requiredFeedbacks": 1
     },
-    "2024-02-02": {
+    "2024-04-02": {
       "phrase": "Cracking your knuckles leads to arthritis.",
       "requiredFeedbacks": 1
     },
-    "2024-02-03": {
+    "2024-04-03": {
       "phrase": "Suger substitudes can cause cancer",
       "requiredFeedbacks": 1
     },
-    "2024-02-04": {
+    "2024-04-04": {
       "phrase": "An apple a day, keeps the cancer away.",
       "requiredFeedbacks": 1
     },
-    "2024-02-05": {
+    "2024-04-05": {
       "phrase": "Standing too close to the microwave can cause cancer.",
       "requiredFeedbacks": 1
     },
-    "2024-02-06": {
+    "2024-04-06": {
       "phrase": "Cracking your knuckles leads to arthritis.",
       "requiredFeedbacks": 1
     },
-    "2024-02-07": {
+    "2024-04-07": {
       "phrase": "Autism disorder is a result of childhood vaccinations.",
       "requiredFeedbacks": 1
     },
-    "2024-02-08": {
+    "2024-04-08": {
       "phrase": "Cracking your knuckles leads to arthritis.",
       "requiredFeedbacks": 1
     }
