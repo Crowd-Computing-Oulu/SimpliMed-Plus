@@ -4,6 +4,7 @@ import "./header.css";
 // import "bootstrap-icons/font/bootstrap-icons.css";
 import { DoorClosed } from "react-bootstrap-icons";
 export default function Header({ state }) {
+  console.log(state, "state in header is");
   function getAbstract() {
     console.log("Get abstract has been clicked");
   }

@@ -43,7 +43,7 @@ let state = {
   //   elementaryTime,
   // },
 };
-chrome.storage.local.remove(["username", "accessToken"]);
+// chrome.storage.local.remove(["username", "accessToken"]);
 // console.log("state in background", state);
 chrome.storage.local.get(["accessToken", "username"], async function (data) {
   state.username = data.username;
@@ -52,7 +52,7 @@ chrome.storage.local.get(["accessToken", "username"], async function (data) {
   await updateStudyStatus();
   // this is differnt than the v1
   // console.log("sending a message to update state in app.js");
-  // chrome.runtime.sendMessage({ action: "updateState", state });
+  chrome.runtime.sendMessage({ action: "updateState", state });
 });
 
 // chrome.runtime.sendMessage("updateState", state);
@@ -69,7 +69,7 @@ chrome.runtime.onMessage.addListener(async function (
       await setChromeStorage();
       // this is differnt than the v1
       console.log("Access Token saved in the storage successfully!");
-      chrome.runtime.sendMessage({ action: "updateState", state });
+      // chrome.runtime.sendMessage({ action: "updateState", state });
       // sendResponse({
       //   response: "Login Successfull",
       // });

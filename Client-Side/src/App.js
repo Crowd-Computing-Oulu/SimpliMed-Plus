@@ -48,7 +48,11 @@ function App() {
     if (message.action === "updateState") {
       console.log("state will be updated in the front");
       console.log("state:", message.state);
-      setState(message.state);
+      setState((prevState) => ({
+        ...prevState,
+        username: message.state.username,
+        accessToken: message.state.accessToken,
+      }));
       // if (!message.state.accessToken) {
       //   setAccessToken(null);
       // }
@@ -95,14 +99,21 @@ function App() {
 
     fetchTabData();
   }, []);
-
-  chrome.storage.local.get("accessToken", (data) => {
-    if (data.accessToken) {
-      setAccessToken(data.accessToken);
-    }
-    // console.log("Access token from storage is", accessToken);
-    // You can perform further operations with the accessToken here
-  });
+  React.useEffect(() => {
+    chrome.storage.local.get(["accessToken", "username"], (data) => {
+      if (data.accessToken) {
+        console.log("storage is", data);
+        setState((prevState) => ({
+          ...prevState,
+          username: data.username,
+          accessToken: data.accessToken,
+        }));
+        // setAccessToken(data.accessToken);
+      }
+      // console.log("Access token from storage is", accessToken);
+      // You can perform further operations with the accessToken here
+    });
+  }, []);
 
   return (
     <div className="App">
