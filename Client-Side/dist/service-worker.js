@@ -43,59 +43,94 @@ let state = {
   //   elementaryTime,
   // },
 };
-// chrome.storage.local.remove(["username", "accessToken"]);
-// console.log("state in background", state);
-chrome.storage.local.get(["accessToken", "username"], async function (data) {
-  state.username = data.username;
-  state.accessToken = data.accessToken;
-  console.log(state.username, state.accessToken);
-  await updateStudyStatus();
-  // this is differnt than the v1
-  // console.log("sending a message to update state in app.js");
-  chrome.runtime.sendMessage({ action: "updateState", state });
-});
+
+// UPON OPENING THE EXTENSION
 
 // chrome.runtime.sendMessage("updateState", state);
-chrome.runtime.onMessage.addListener(async function (
-  message,
-  sender,
-  sendResponse
-) {
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.action === "firstOpen") {
+    chrome.storage.local.get(["accessToken", "username"], function (data) {
+      if (data.username && data.accessToken) {
+        state.username = data.username;
+        state.accessToken = data.accessToken;
+        sendResponse({
+          response: "TokenExist",
+          state: state,
+        });
+      } else {
+        sendResponse({
+          response: "NoToken",
+        });
+      }
+    });
+    // To indicate that sendResponse will be called asynchronously
+    return true;
+  }
+
   if (message.action === "loginRequest") {
     if (message.username) {
-      const accessToken = await requestLogin(message.username);
-      state.username = message.username;
-      state.accessToken = accessToken;
-      await setChromeStorage();
-      // this is differnt than the v1
-      console.log("Access Token saved in the storage successfully!");
-      // chrome.runtime.sendMessage({ action: "updateState", state });
-      // sendResponse({
-      //   response: "Login Successfull",
-      // });
+      requestLogin(message.username)
+        .then(function (accessToken) {
+          state.username = message.username;
+          state.accessToken = accessToken;
+          return setChromeStorage();
+        })
+        .then(function () {
+          // this funciton will send a message and the state to the login request
+          console.log("Access Token saved in the storage successfully!");
+          sendResponse({
+            response: "Login Successfull",
+            state: state,
+          });
+        })
+        .catch(function (error) {
+          console.error("Login failed:", error);
+          sendResponse({
+            response: "Login Failed",
+          });
+        });
     }
+    // To indicate that sendResponse will be called asynchronously
+    return true;
   } else if (message.action === "logoutRequest") {
-    await clearChromeStorage();
-    state = {
-      isLoading: false,
-      difficultyLevel: 0,
-      instructionShown: false,
-      feedback: {
-        originalTime: 0,
-        advancedTime: 0,
-        elementaryTime: 0,
-        onBoardingQuestionnaire: {},
-      },
-    };
-    chrome.runtime.sendMessage({ action: "updateState", state });
-
-    // sendResponse("this is the response");
+    clearChromeStorage()
+      .then(function () {
+        state = {
+          isLoading: false,
+          difficultyLevel: 0,
+          instructionShown: false,
+          feedback: {
+            originalTime: 0,
+            advancedTime: 0,
+            elementaryTime: 0,
+            onBoardingQuestionnaire: {},
+          },
+        };
+        sendResponse({
+          response: "Logout Successfull",
+          state: state,
+        });
+        // chrome.runtime.sendMessage({ action: "updateState", state });
+      })
+      .catch(function (error) {
+        console.error("Logout failed:", error);
+      });
+    // To indicate that sendResponse will be called asynchronously
+    return true;
   }
   if (message.action === "submitUserQuestion") {
-    let result = await submitUserQuestion(message.userQuestion);
-    console.log(result);
+    submitUserQuestion(message.userQuestion)
+      .then(function (result) {
+        console.log(result);
+      })
+      .catch(function (error) {
+        console.error("Submit user question failed:", error);
+      });
+    // To indicate that sendResponse will be called asynchronously
+    return true;
   }
 });
+
 // FUNCTIONS
 
 // REQUEST STUDY STATUTS AT VERY BEGINING
@@ -121,16 +156,14 @@ async function requestStudyStatus() {
             `http://localhost:8080/study/status`,
             options
           );
-          // console.log(response);
           let responseData = await response.json();
-          // console.log("this is study status", responseData);
           if (response.status == 200) {
             resolve(responseData);
           } else {
             reject({ message: responseData.message });
           }
-          // console.log("this is responseData", responseData);
         } catch (error) {
+          console.erorr("Error Fetching study status");
           reject(error);
         }
       } else {

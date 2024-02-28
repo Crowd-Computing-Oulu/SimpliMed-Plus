@@ -1,14 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./login.css";
 
-export default function Login({ onStateChange }) {
+export default function Login({ handleLogin }) {
   const [username, setUsername] = React.useState("");
 
-  function submitUsername() {
-    // the callback function provided by the parent
-    // Username will be sent to the parent
-    onStateChange(username);
-  }
   return (
     <div className="login-container" id="login-container">
       <h2 className="mt-5">Sign in with your Prolific username</h2>
@@ -25,7 +20,8 @@ export default function Login({ onStateChange }) {
           placeholder="Your Prolific Username"
           required
         />
-        <button onClick={submitUsername} type="submit">
+        {/* Passing the new username to the app component  */}
+        <button onClick={() => handleLogin(username)} type="submit">
           Sign In
         </button>
       </form>

@@ -1,9 +1,8 @@
 /*global chrome */
 import React from "react";
 import "./header.css";
-// import "bootstrap-icons/font/bootstrap-icons.css";
 import { DoorClosed } from "react-bootstrap-icons";
-export default function Header({ state }) {
+export default function Header({ state, handleLogout }) {
   console.log(state, "state in header is");
   function getAbstract() {
     console.log("Get abstract has been clicked");
@@ -11,12 +10,9 @@ export default function Header({ state }) {
   function logout() {
     // onStateChange();
     console.log("will send this message for logout");
-    chrome.runtime.sendMessage(
-      { action: "logoutRequest" }
-      // function (response) {
-      //   console.log("this is the response in Header", response);
-      // }
-    );
+    chrome.runtime.sendMessage({ action: "logoutRequest" }, (response) => {
+      console.log(response);
+    });
   }
 
   return (
@@ -29,7 +25,20 @@ export default function Header({ state }) {
         >
           Get Abstract
         </button>
-        <span id="remainingFeedbacks"></span>
+
+        {state.remainingFeedbacks === 0 && (
+          <span id="remainingFeedbacks">No Remaining Feedbacks</span>
+        )}
+        {state.remainingFeedbacks === 1 && (
+          <span id="remainingFeedbacks">
+            {state.remainingFeedbacks} Remaining Feedback{" "}
+          </span>
+        )}
+        {state.remainingFeedbacks > 1 && (
+          <span id="remainingFeedbacks">
+            {state.remainingFeedbacks} Remaining Feedbacks{" "}
+          </span>
+        )}
       </div>
 
       <div className="flex-row">
@@ -38,7 +47,7 @@ export default function Header({ state }) {
           <span className="tooltipUsernameText">Prolific Username</span>
         </span>
         <span
-          onClick={logout}
+          onClick={handleLogout}
           className="logoutIcon-container tooltip"
           id="logoutBtn"
         >

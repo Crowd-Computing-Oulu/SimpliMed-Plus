@@ -40,7 +40,20 @@ function App() {
   const [currentTab, setCurrentTab] = React.useState(null);
   const [abstract, setAbstract] = React.useState(null);
 
-  chrome.runtime.onMessage.addListener(async function (
+  React.useEffect(() => {
+    chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
+      console.log("I am the response", response.response, response.state);
+      if (response.response === "TokenExist") {
+        setState((prevState) => ({
+          ...prevState,
+          ...response.state,
+        }));
+      }
+    });
+  }, []);
+
+  // React.useEffect(() => {
+  chrome.runtime.onMessage.addListener(function (
     message,
     sender,
     sendResponse
@@ -50,33 +63,51 @@ function App() {
       console.log("state:", message.state);
       setState((prevState) => ({
         ...prevState,
-        username: message.state.username,
-        accessToken: message.state.accessToken,
+        ...message.state,
       }));
+      console.log(state);
       // if (!message.state.accessToken) {
       //   setAccessToken(null);
       // }
       // console.log(state);
     }
   });
+  // }, []);
 
+  // This function will only run if username changes(if we enter a username)
   React.useEffect(() => {
-    // Sending the username to the service worker if there is any
-    if (username !== null) {
-      chrome.runtime.sendMessage(
-        { action: "loginRequest", username }
-        // (response) => {
-        //   console.log("I am the response", response.response);
-        // }
-      );
-      // console.log("I am the username insde the app component", username);
+    async function sendMessage() {
+      if (username !== null) {
+        console.log("I should only be rendered once");
+        chrome.runtime.sendMessage(
+          { action: "loginRequest", username },
+          async function (response) {
+            console.log("I am the response", response.response);
+            console.log("I am the state", response.state);
+            // This will update the state after the login was successfull
+            // response state contains the token and the username here
+            setState((prevState) => ({
+              ...prevState,
+              ...response.state,
+            }));
+          }
+        );
+      }
     }
+
+    sendMessage(); // Call the async function to send the message
   }, [username]);
+  // Sending the username to the service worker if there is any
 
   // callback function to receive the username from Login component
   function handleLoginChange(submittedUsername) {
     console.log("the username should be updated here");
     setUsername(submittedUsername);
+  }
+  function handleLogoutChange() {
+    console.log("user has logged out");
+    // Deleting the state upon logout
+    setState(null);
   }
 
   React.useEffect(() => {
@@ -119,11 +150,11 @@ function App() {
     <div className="App">
       {state && state.accessToken ? (
         <>
-          <Header state={state} />
+          <Header state={state} handleLogout={handleLogoutChange} />
           <AiAgent />
         </>
       ) : (
-        <Login onStateChange={handleLoginChange} />
+        <Login handleLogin={handleLoginChange} />
       )}
 
       {/* <Instructions /> */}
