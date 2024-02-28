@@ -46,18 +46,6 @@ body {
 .button:hover {
   background-color: var(--secondary-color) !important;
 }
-.flex-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-.flex-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
 
 .dailyPhrase {
   font-weight: bold;

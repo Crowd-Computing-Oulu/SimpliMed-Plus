@@ -8,6 +8,8 @@ import Login from "./Components/Login";
 import Instructions from "./Components/Instructions";
 import Abstracts from "./Components/Abstracts";
 import AiAgent from "./Components/AiAgent";
+import GetAbstractBtn from "./Components/GetAbstractBtn";
+import "bootstrap/dist/css/bootstrap-grid.min.css"; // Only import the grid system to avoid losing icons
 
 // var port = chrome.runtime.connect({ name: "popupConnection" });
 
@@ -111,6 +113,10 @@ function App() {
   }
 
   React.useEffect(() => {
+    console.log("abstract is", abstract);
+  }, [abstract]);
+
+  React.useEffect(() => {
     const fetchTabData = async () => {
       try {
         const tabs = await chrome.tabs.query({
@@ -129,6 +135,7 @@ function App() {
     };
 
     fetchTabData();
+    console.log(abstract);
   }, []);
   React.useEffect(() => {
     chrome.storage.local.get(["accessToken", "username"], (data) => {
@@ -151,18 +158,21 @@ function App() {
       {state && state.accessToken ? (
         <>
           <Header state={state} handleLogout={handleLogoutChange} />
-          <AiAgent />
+          {abstract && (
+            <GetAbstractBtn setState={setState} abstract={abstract} />
+          )}
+          {/* <AiAgent /> */}
         </>
       ) : (
         <Login handleLogin={handleLoginChange} />
       )}
 
-      {/* <Instructions /> */}
+      <Instructions />
       {/* {abstract && <Abstracts abstract={abstract}  />} */}
 
       {/* <Abstracts abstract={abstract} /> */}
 
-      {/* <Loading /> */}
+      <Loading />
 
       {/* <h1 className="app-blue">RReady to build the SimpliMed plus</h1> */}
     </div>

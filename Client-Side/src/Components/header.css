@@ -7,14 +7,14 @@
 } */
 #header {
   font-family: Impact, sans-serif;
-  height: 100px;
-  padding: 1.5rem 15px;
-  display: flex;
+  /* height: 100px; */
+  padding: 1rem 15px;
+  /* display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between; */
   background-color: var(--tertiary-color) !important;
-  box-shadow: 0 1px 9px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 9px rgba(0, 0, 0, 0.2);
 }
 #header p {
   margin: 0;
@@ -81,16 +81,4 @@ header .tooltipUsername {
 .tooltipUsername:hover .tooltipUsernameText {
   visibility: visible;
   opacity: 1;
-}
-
-#getAbstract {
-  padding: 5px 10px;
-  background-color: var(--primary-color);
-  color: white;
-  margin: 0;
-  font-size: 0.8rem;
-  position: relative;
-}
-#getAbstract:hover {
-  background-color: var(--primary-color);
 }
