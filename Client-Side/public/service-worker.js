@@ -118,6 +118,58 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // To indicate that sendResponse will be called asynchronously
     return true;
   }
+  if (message.action === "summaryRequest") {
+    if (state.accessToken) {
+      // state.accessToken = message.accessToken;
+      delete state.abstractData;
+      delete state.feedback;
+      state.feedback = { originalTime: 0, advancedTime: 0, elementaryTime: 0 };
+      state.instructionShown = true;
+      state.isLoading = true;
+      chrome.runtime.sendMessage({ action: "stateUpdate", state });
+      sendResponse({
+        response: "Token Exist and should go on loading",
+        state: state,
+      });
+      try {
+        // state.abstractData = await requestSummary(message.abstractInformation);
+        // let result = await requestSummary(message.abstractInformation);
+        requestSummary(message.abstractInformation)
+          .then((result) => {
+            state.abstractData = result.abstract;
+            state.feedback = result.feedback;
+            if (!state.feedback) {
+              state.feedback = {
+                originalTime: 0,
+                advancedTime: 0,
+                elementaryTime: 0,
+              };
+            } else {
+              state.feedback.status = "sent";
+              state.feedback.message =
+                "You have already read this article and submitted your answers. If there are remaining daily submissions, choose another article!";
+            }
+          })
+          .catch((err) => {
+            console.error("Error", err);
+          });
+
+        // state.abstractData.shuffledArray = shuffleArray(["1", "2", "3"]);
+        // console.log(state.abstractData.shuffledArray);
+      } catch (error) {
+        // console.log(error.message);
+        // showing the error message
+        chrome.runtime.sendMessage({
+          action: "requestSummaryError",
+          err: error.message,
+        });
+        // show a message
+      }
+      state.isLoading = false;
+    }
+    // To indicate that sendResponse will be called asynchronously
+    return true;
+  }
   if (message.action === "submitUserQuestion") {
     submitUserQuestion(message.userQuestion)
       .then(function (result) {
@@ -172,6 +224,51 @@ async function requestStudyStatus() {
     });
   });
 }
+
+// REQUEST ABSTRACT SUMMARIES
+async function requestSummary(abstractInfromation) {
+  const { url, originalTitle, originalAbstract } = abstractInfromation;
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get("accessToken", async function (data) {
+      const accessToken = data.accessToken;
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "JWT " + accessToken,
+        },
+        body: JSON.stringify({
+          originalAbstract: originalAbstract,
+          originalTitle: originalTitle,
+          url: url,
+        }),
+      };
+
+      try {
+        const response = await fetch(
+          `http://localhost:8080/abstracts/abstract`,
+          options
+        );
+        let responseData = await response.json();
+        // console.log("this is response", responseData);
+        if (response.status == 200) {
+          let result = {};
+          // adding the interactionId in abstractData
+          responseData.abstract.interactionID = responseData.interactionId;
+          result.abstract = responseData.abstract;
+          result.feedback = responseData.feedback;
+          resolve(result);
+        } else {
+          reject({ message: responseData.message });
+        }
+        // console.log("this is responseData", responseData);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+}
+
 // UPDATE STUDY STATUS WITH EVERYCHANGE
 async function updateStudyStatus() {
   // to check the daily phrase and the remainin daily feedbacks
