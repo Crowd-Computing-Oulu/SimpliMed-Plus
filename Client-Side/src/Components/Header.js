@@ -7,13 +7,13 @@ export default function Header({ state, handleLogout }) {
   function getAbstract() {
     console.log("Get abstract has been clicked");
   }
-  function logout() {
-    // onStateChange();
-    console.log("will send this message for logout");
-    chrome.runtime.sendMessage({ action: "logoutRequest" }, (response) => {
-      console.log(response);
-    });
-  }
+  // function logout() {
+  //   // onStateChange();
+  //   console.log("will send this message for logout");
+  //   chrome.runtime.sendMessage({ action: "logoutRequest" }, (response) => {
+  //     console.log(response);
+  //   });
+  // }
 
   return (
     <div id="header" className="hiddenn header">

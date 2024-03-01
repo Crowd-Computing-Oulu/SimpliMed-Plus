@@ -114,6 +114,8 @@ function App() {
     console.log("user has logged out");
     // Deleting the state upon logout
     setState(null);
+    // Do I need to send anything to background?!
+    chrome.runtime.sendMessage({ action: "logoutRequest" });
   }
 
   React.useEffect(() => {
@@ -142,6 +144,8 @@ function App() {
     fetchTabData();
     console.log(abstract);
   }, []);
+
+  // what is the pint of this
   React.useEffect(() => {
     chrome.storage.local.get(["accessToken", "username"], (data) => {
       if (data.accessToken) {
@@ -157,7 +161,12 @@ function App() {
       // You can perform further operations with the accessToken here
     });
   }, []);
-
+  // end of the point
+  React.useEffect(() => {
+    if (state && state.isLoading) {
+      console.log("sate is loading", state.isLoading);
+    }
+  }, [state]);
   return (
     <div className="App">
       {state && state.accessToken ? (
