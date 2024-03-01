@@ -120,21 +120,22 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
   if (message.action === "summaryRequest") {
     if (state.accessToken) {
-      // state.accessToken = message.accessToken;
+      // All the information from the previous abstract will be deleted from the state
       delete state.abstractData;
       delete state.feedback;
       state.feedback = { originalTime: 0, advancedTime: 0, elementaryTime: 0 };
       state.instructionShown = true;
       state.isLoading = true;
-      chrome.runtime.sendMessage({ action: "stateUpdate", state });
+      // chrome.runtime.sendMessage({ action: "stateUpdate", state });
+      // The new state will be updated in sidepanel
       sendResponse({
-        response: "Token Exist and should go on loading",
+        response: "Token Exist and page should go on loading",
         state: state,
       });
       try {
         // state.abstractData = await requestSummary(message.abstractInformation);
         // let result = await requestSummary(message.abstractInformation);
-        requestSummary(message.abstractInformation)
+        requestSummary(message.abstract)
           .then((result) => {
             state.abstractData = result.abstract;
             state.feedback = result.feedback;

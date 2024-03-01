@@ -30,7 +30,11 @@ async function getTabInformation(currentTab) {
     .getElementsByClassName("heading-title")[0]
     .textContent.trim();
   // console.log(originalTitle, originalText);
-  return { originalText: originalText, originalTitle: originalTitle };
+  return {
+    url: currentTab.url,
+    originalText: originalText,
+    originalTitle: originalTitle,
+  };
 }
 
 function App() {
@@ -126,6 +130,7 @@ function App() {
         const currentTab = tabs[0];
         setCurrentTab(currentTab);
         const abstractInfo = await getTabInformation(currentTab);
+        console.log(abstractInfo);
         setAbstract(abstractInfo);
         // Send a message to background script to get tab information and HTML content
         // chrome.runtime.sendMessage({ action: "currentTab", currentTab });
@@ -172,7 +177,7 @@ function App() {
 
       {/* <Abstracts abstract={abstract} /> */}
 
-      <Loading />
+      {state && state.loading && <Loading />}
 
       {/* <h1 className="app-blue">RReady to build the SimpliMed plus</h1> */}
     </div>
