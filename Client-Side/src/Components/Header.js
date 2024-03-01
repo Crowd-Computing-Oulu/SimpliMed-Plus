@@ -4,16 +4,6 @@ import "./header.css";
 import { DoorClosed } from "react-bootstrap-icons";
 export default function Header({ state, handleLogout }) {
   console.log(state, "state in header is");
-  function getAbstract() {
-    console.log("Get abstract has been clicked");
-  }
-  // function logout() {
-  //   // onStateChange();
-  //   console.log("will send this message for logout");
-  //   chrome.runtime.sendMessage({ action: "logoutRequest" }, (response) => {
-  //     console.log(response);
-  //   });
-  // }
 
   return (
     <div id="header" className="hiddenn header">
@@ -29,7 +19,6 @@ export default function Header({ state, handleLogout }) {
         >
           <i className="bi bi-box-arrow-right"></i>
           <DoorClosed size="1.4rem" color="white" />
-          {/* <i className="fas fa-sign-out-alt"></i> */}
           <span className="tooltipText">Logout</span>
         </span>
       </div>
