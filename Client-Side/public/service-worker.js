@@ -126,12 +126,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       state.feedback = { originalTime: 0, advancedTime: 0, elementaryTime: 0 };
       state.instructionShown = true;
       state.isLoading = true;
-      // chrome.runtime.sendMessage({ action: "stateUpdate", state });
-      // The new state will be updated in sidepanel
-      sendResponse({
-        response: "Token Exist and page should go on loading",
-        state: state,
-      });
+      chrome.runtime.sendMessage({ action: "updateState", state });
+      // The new state will be updated in sidepanel to have the loading component
+      // sendResponse({
+      //   response: "Token Exist and page should go on loading",
+      //   state: state,
+      // });
       try {
         // state.abstractData = await requestSummary(message.abstractInformation);
         // let result = await requestSummary(message.abstractInformation);
@@ -150,23 +150,38 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
               state.feedback.message =
                 "You have already read this article and submitted your answers. If there are remaining daily submissions, choose another article!";
             }
+            sendResponse({
+              response: "Succesfull Response",
+              state: state,
+            });
           })
           .catch((err) => {
             console.error("Error", err);
+            sendResponse({
+              response: "Error",
+              error: err,
+              // state: state,
+            });
           });
-
+        // sendResponse({
+        //   response: "should i be here?",
+        //   state: state,
+        // });
         // state.abstractData.shuffledArray = shuffleArray(["1", "2", "3"]);
         // console.log(state.abstractData.shuffledArray);
       } catch (error) {
         // console.log(error.message);
         // showing the error message
-        chrome.runtime.sendMessage({
-          action: "requestSummaryError",
-          err: error.message,
-        });
-        // show a message
+        // chrome.runtime.sendMessage({
+        //   action: "requestSummaryError",
+        //   err: error.message,
+        // });
+        // the esndresponse here wont work!
+        console.error("Error", error);
       }
       state.isLoading = false;
+      // to remove the loading page
+      // chrome.runtime.sendMessage({ action: "updateState", state });
     }
     // To indicate that sendResponse will be called asynchronously
     return true;

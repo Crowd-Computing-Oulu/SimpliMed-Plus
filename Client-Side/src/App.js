@@ -58,27 +58,27 @@ function App() {
     });
   }, []);
 
-  // React.useEffect(() => {
-  chrome.runtime.onMessage.addListener(function (
-    message,
-    sender,
-    sendResponse
-  ) {
-    if (message.action === "updateState") {
-      console.log("state will be updated in the front");
-      console.log("state:", message.state);
-      setState((prevState) => ({
-        ...prevState,
-        ...message.state,
-      }));
-      console.log(state);
-      // if (!message.state.accessToken) {
-      //   setAccessToken(null);
-      // }
-      // console.log(state);
-    }
-  });
-  // }, []);
+  React.useEffect(() => {
+    chrome.runtime.onMessage.addListener(function (
+      message,
+      sender,
+      sendResponse
+    ) {
+      if (message.action === "updateState") {
+        console.log("state will be update for the ");
+        // console.log("state:", message.state);
+        setState((prevState) => ({
+          ...prevState,
+          ...message.state,
+        }));
+        // console.log(state);
+        // if (!message.state.accessToken) {
+        //   setAccessToken(null);
+        // }
+        // console.log(state);
+      }
+    });
+  }, [state]);
 
   // This function will only run if username changes(if we enter a username)
   React.useEffect(() => {
@@ -167,12 +167,20 @@ function App() {
       console.log("sate is loading", state.isLoading);
     }
   }, [state]);
+
+  // function updateState(newState) {
+  //   setState((prevState) => ({
+  //     ...prevState,
+  //     ...newState,
+  //   }));
+  // }
+
   return (
     <div className="App">
       {state && state.accessToken ? (
         <>
           <Header state={state} handleLogout={handleLogoutChange} />
-          {abstract && (
+          {abstract && state && !state.isLoading && (
             <GetAbstractBtn setState={setState} abstract={abstract} />
           )}
           {/* <AiAgent /> */}
@@ -181,12 +189,12 @@ function App() {
         <Login handleLogin={handleLoginChange} />
       )}
 
-      <Instructions />
+      {state && !state.isLoading && <Instructions />}
       {/* {abstract && <Abstracts abstract={abstract}  />} */}
 
       {/* <Abstracts abstract={abstract} /> */}
 
-      {state && state.loading && <Loading />}
+      {state && state.isLoading ? <Loading /> : "TEst"}
 
       {/* <h1 className="app-blue">RReady to build the SimpliMed plus</h1> */}
     </div>
