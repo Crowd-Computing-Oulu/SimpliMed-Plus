@@ -1,0 +1,93 @@
+h4.original-title,
+h4.summary-title {
+  width: 100%;
+  color: var(--secondary-color);
+  margin: 1.25rem 0;
+  font-size: 1.15rem;
+}
+/*
+
+option {
+  padding: 0;
+}
+input[type="range"] {
+  width: 360px;
+}
+#tickmarks option {
+  margin-right: 50px;
+} */
+
+div.main-content {
+  padding: 0 5%;
+  text-align: justify;
+  width: 100%;
+}
+#difficulty-lvl {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  font-family: var(--secondary-font);
+  font-size: 1rem;
+
+  position: relative;
+  /* left: -6%; */
+  width: 100%;
+}
+.difficulty-lvl__title {
+  font-size: 1rem;
+  font-style: italic;
+}
+#difficulty-lvl_instructions {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-family: var(--primary-font);
+}
+
+.difficulty-lvl__slider {
+  width: 360px;
+  position: relative;
+}
+
+/* Style the slider input */
+.slider {
+  width: 100%;
+}
+
+/* Style the tickmarks */
+#tickmarks option {
+  position: absolute;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+}
+
+/* Adjust positions of tickmarks */
+#tickmarks option[value="0"] {
+  left: 0%;
+}
+
+#tickmarks option[value="1"] {
+  left: 25%;
+}
+
+#tickmarks option[value="2"] {
+  left: 50%;
+}
+
+#tickmarks option[value="3"] {
+  left: 75%;
+}
+
+#tickmarks option[value="4"] {
+  left: 100%;
+}
+datalist {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  writing-mode: horizontal-lr;
+}

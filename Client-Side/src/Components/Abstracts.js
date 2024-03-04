@@ -8,7 +8,7 @@ export default function Abstracts({ abstracts }) {
     setVersion(parseInt(e.target.value));
   }
   return (
-    <div className="main-content hiddenn" id="main-content">
+    <div className="main-content " id="main-content">
       <div id="difficulty-lvl" className="">
         <span className="difficulty-lvl__title">
           Change the version of the abstract
@@ -37,9 +37,9 @@ export default function Abstracts({ abstracts }) {
         </div>
       </div>
       {version === 0 && (
-        <div id="difficulty-lvl_instructions" className="">
-          <p>
-            The "phrase of the day" is:
+        <div id="difficulty-lvl_instructions" className=" mt-5">
+          <p className="fw-bolder">
+            The "daily phrase" is:
             <span className="dailyPhrase text-success"></span>
           </p>
           <ol>
@@ -71,10 +71,10 @@ export default function Abstracts({ abstracts }) {
         )}
 
         {version === 1 && (
-          <h4 className="elementary-abs">{abstracts.elementaryAbstract}</h4>
+          <p className="elementary-abs">{abstracts.elementaryAbstract}</p>
         )}
         {version === 2 && (
-          <h4 className="advanced-abs">{abstracts.advancedAbstract}</h4>
+          <p className="advanced-abs">{abstracts.advancedAbstract}</p>
         )}
         {/* {version === 3 && (
           <h4 className="original-abs">{abstracts.originalAbstract}</h4>
