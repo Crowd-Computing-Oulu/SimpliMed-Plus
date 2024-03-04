@@ -29,10 +29,10 @@ export default function Loading() {
             r="82"
             fill="none"
             stroke="url(#pl-grad1)"
-            stroke-width="36"
-            stroke-dasharray="0 257 1 257"
-            stroke-dashoffset="0.01"
-            stroke-linecap="round"
+            strokeWidth="36"
+            strokeDasharray="0 257 1 257"
+            strokeDashoffset="0.01"
+            strokeLinecap="round"
             transform="rotate(-90,100,100)"
           />
           <line
@@ -42,9 +42,9 @@ export default function Loading() {
             y1="18"
             x2="100.01"
             y2="182"
-            stroke-width="36"
-            stroke-dasharray="1 165"
-            stroke-linecap="round"
+            strokeWidth="36"
+            strokeDasharray="1 165"
+            strokeLinecap="round"
           />
         </svg>
       </div>
