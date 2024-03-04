@@ -1,8 +1,12 @@
 import React from "react";
 import "./abstracts.css";
 
-export default function Abstracts(props) {
-  console.log(props.abstract);
+export default function Abstracts({ abstracts }) {
+  const [version, setVersion] = React.useState(0);
+  function handleSliderChange(e) {
+    // change the value from string to integer
+    setVersion(parseInt(e.target.value));
+  }
   return (
     <div className="main-content hiddenn" id="main-content">
       <div id="difficulty-lvl" className="">
@@ -18,9 +22,10 @@ export default function Abstracts(props) {
             min="0"
             max="4"
             step="1"
-            value="0"
+            value={version}
             list="tickmarks"
             className="slider"
+            onChange={handleSliderChange}
           />
           <datalist id="tickmarks">
             <option value="0">Start</option>
@@ -31,35 +36,49 @@ export default function Abstracts(props) {
           </datalist>
         </div>
       </div>
-      <div id="difficulty-lvl_instructions" className="hidden">
-        <p>
-          The "phrase of the day" is:
-          <span className="dailyPhrase text-success"></span>
-        </p>
-        <ol>
-          <li>
-            Use the above slider to see the different versions of the abstract.
-          </li>
-          <li>Read and rate all the 3 versions.</li>
-          <li>Go to the Finish section. Answer the questions and submit.</li>
-          <li>
-            You need to repeat these steps for 3 different articles each day.
-          </li>
-          <li>
-            You can see the remaining daily submission next to "Get Abstract"
-            button.
-          </li>
-          <li>
-            After the fifth day, you will see the post-questionnaire link.
-          </li>
-        </ol>
-      </div>
+      {version === 0 && (
+        <div id="difficulty-lvl_instructions" className="">
+          <p>
+            The "phrase of the day" is:
+            <span className="dailyPhrase text-success"></span>
+          </p>
+          <ol>
+            <li>
+              Use the above slider to see the different versions of the
+              abstract.
+            </li>
+            <li>Read and rate all the 3 versions.</li>
+            <li>Go to the Finish section. Answer the questions and submit.</li>
+            <li>
+              You need to repeat these steps for 3 different articles each day.
+            </li>
+            <li>
+              You can see the remaining daily submission next to "Get Abstract"
+              button.
+            </li>
+            <li>
+              After the fifth day, you will see the post-questionnaire link.
+            </li>
+          </ol>
+        </div>
+      )}
       <div id="abstract-container">
-        <h4 className="original-title">{props.abstract.originalText}</h4>
-        <h4 className="summary-title">test</h4>
-        <p className="elementary-abs">test</p>
-        <p className="advanced-abs">test</p>
-        <p className="original-abs">test</p>
+        {/* {version === 3 && (
+          <h4 className="original-title">{abstracts.originalTitle}</h4>
+        )} */}
+        {(version === 1 || version === 2) && (
+          <h4 className="summary-title">{abstracts.summerizedTitle}</h4>
+        )}
+
+        {version === 1 && (
+          <h4 className="elementary-abs">{abstracts.elementaryAbstract}</h4>
+        )}
+        {version === 2 && (
+          <h4 className="advanced-abs">{abstracts.advancedAbstract}</h4>
+        )}
+        {/* {version === 3 && (
+          <h4 className="original-abs">{abstracts.originalAbstract}</h4>
+        )} */}
       </div>
     </div>
   );
