@@ -12,6 +12,10 @@ export default function GetAbstractBtn({ setState, updateState, abstract }) {
       },
       (response) => {
         console.log("response in btn", response);
+        setState((prevState) => ({
+          ...prevState,
+          ...response.state,
+        }));
 
         // if (response.response === "Token Exist and page should go on loading") {
         //   console.log("page should go on loading", response.state);
