@@ -32,7 +32,7 @@ async function getTabInformation(currentTab) {
   // console.log(originalTitle, originalText);
   return {
     url: currentTab.url,
-    originalText: originalText,
+    originalAbstract: originalText,
     originalTitle: originalTitle,
   };
 }
@@ -48,7 +48,7 @@ function App() {
 
   React.useEffect(() => {
     chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
-      console.log("I am the response", response.response, response.state);
+      console.log("state upon open is", response.state);
       if (response.response === "TokenExist") {
         setState((prevState) => ({
           ...prevState,
@@ -189,12 +189,14 @@ function App() {
         <Login handleLogin={handleLoginChange} />
       )}
 
-      {state && !state.isLoading && <Instructions />}
-      {/* {abstract && <Abstracts abstract={abstract}  />} */}
+      {state && !state.isLoading && !state.abstractData && <Instructions />}
+      {state && state.abstractData && (
+        <Abstracts abstracts={state.abstractData} />
+      )}
 
       {/* <Abstracts abstract={abstract} /> */}
 
-      {state && state.isLoading ? <Loading /> : "TEst"}
+      {state && state.isLoading ? <Loading /> : ""}
 
       {/* <h1 className="app-blue">RReady to build the SimpliMed plus</h1> */}
     </div>
