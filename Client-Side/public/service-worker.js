@@ -13,6 +13,34 @@
 //   }
 // });
 
+// ----------------------------------
+// chrome.action.onClicked.addListener(function (tab) {
+//   if (tab.url.startsWith("http")) {
+//     chrome.debugger.attach({ tabId: tab.id }, "1.2", function () {
+//       chrome.debugger.sendCommand(
+//         { tabId: tab.id },
+//         "Network.enable",
+//         {},
+//         function () {
+//           if (chrome.runtime.lastError) {
+//             console.error(chrome.runtime.lastError);
+//           }
+//         }
+//       );
+//     });
+//   } else {
+//     console.log("Debugger can only be attached to HTTP/HTTPS pages.");
+//   }
+// });
+
+// chrome.debugger.onEvent.addListener(function (source, method, params) {
+//   if (method === "Network.responseReceived") {
+//     console.log("Response received:", params.response);
+//     // Perform your desired action with the response data
+//   }
+// });
+
+// -------------------------
 let state = {
   // accessToken: "",
   isLoading: false,
@@ -126,8 +154,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       state.feedback = { originalTime: 0, advancedTime: 0, elementaryTime: 0 };
       state.instructionShown = true;
       state.isLoading = true;
-      chrome.runtime.sendMessage({ action: "updateState", state });
       // The new state will be updated in sidepanel to have the loading component
+      chrome.runtime.sendMessage({ action: "updateState", state });
       // sendResponse({
       //   response: "Token Exist and page should go on loading",
       //   state: state,
@@ -137,8 +165,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         // let result = await requestSummary(message.abstractInformation);
         requestSummary(message.abstract)
           .then((result) => {
+            state.isLoading = false;
             state.abstractData = result.abstract;
             state.feedback = result.feedback;
+            console.log("state in background", state);
             if (!state.feedback) {
               state.feedback = {
                 originalTime: 0,
@@ -179,20 +209,23 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         // the esndresponse here wont work!
         console.error("Error", error);
       }
-      state.isLoading = false;
+      // state.isLoading = false;
       // to remove the loading page
       // chrome.runtime.sendMessage({ action: "updateState", state });
     }
     // To indicate that sendResponse will be called asynchronously
     return true;
   }
-  if (message.action === "submitUserQuestion") {
-    submitUserQuestion(message.userQuestion)
+  if (message.action === "requestKeywords") {
+    requestKeywords(message.initialQuestion)
       .then(function (result) {
         console.log(result);
+        // sendResponse((response) => {
+        //   console.log("test");
+        // });
       })
       .catch(function (error) {
-        console.error("Submit user question failed:", error);
+        console.error("Submit user initial question failed:", error);
       });
     // To indicate that sendResponse will be called asynchronously
     return true;
@@ -346,7 +379,7 @@ async function requestLogin(username) {
 }
 
 // REQUEST USER QUESTION FROM THE AI
-async function submitUserQuestion(userQuestion) {
+async function requestKeywords(initialQuestion) {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get("accessToken", async function (data) {
       const accessToken = data.accessToken;
@@ -357,18 +390,19 @@ async function submitUserQuestion(userQuestion) {
           Authorization: "JWT " + accessToken,
         },
         body: JSON.stringify({
-          userQuestion: userQuestion,
+          initialQuestion: initialQuestion,
         }),
       };
 
       try {
         const response = await fetch(
-          `http://localhost:8080/users/questions`,
+          `http://localhost:8080/users/suggestions`,
           options
         );
         let responseData = await response.json();
         if (response.status == 200) {
           let result = {};
+          console.log(responseData);
           // adding the interactionId in abstractData
           //   responseData.abstract.interactionID = responseData.interactionId;
           //   result.abstract = responseData.abstract;

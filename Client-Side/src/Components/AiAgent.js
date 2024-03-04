@@ -2,13 +2,11 @@
 import React from "react";
 import "./aiagent.css";
 export default function AiAgent() {
-  const [userQuestion, setUserQuestion] = React.useState("");
+  const [initialQuestion, setInitialQuestion] = React.useState("");
   function submitUserQuestion() {
-    console.log(userQuestion, "state will be sent to ai");
-    setUserQuestion("");
     chrome.runtime.sendMessage({
-      action: "submitUserQuestion",
-      userQuestion,
+      action: "requestKeywords",
+      initialQuestion,
     });
   }
   return (
@@ -23,8 +21,8 @@ export default function AiAgent() {
       <div className="mx-3 mt-3 ">
         {/* <label for="inputField"></label> */}
         <textarea
-          value={userQuestion}
-          onChange={(e) => setUserQuestion(e.target.value)}
+          value={initialQuestion}
+          onChange={(e) => setInitialQuestion(e.target.value)}
           className="p-3"
           type="text"
           id="inputField"
@@ -34,7 +32,7 @@ export default function AiAgent() {
           placeholder="Enter the text here"
         />
 
-        <button onClick={submitUserQuestion} className="btn d-flex-end">
+        <button onClick={submitUserQuestion} className="mt-3 button d-flex-end">
           Send
         </button>
       </div>
