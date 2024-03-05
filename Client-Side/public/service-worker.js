@@ -220,9 +220,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     requestKeywords(message.initialQuestion)
       .then(function (result) {
         console.log(result);
-        // sendResponse((response) => {
-        //   console.log("test");
-        // });
+        sendResponse({
+          response: "Ai response",
+          aiResponse: result,
+        });
       })
       .catch(function (error) {
         console.error("Submit user initial question failed:", error);
@@ -403,6 +404,8 @@ async function requestKeywords(initialQuestion) {
         if (response.status == 200) {
           let result = {};
           console.log(responseData);
+          result.suggestedKeywords = responseData.suggestion.suggestedKeywords;
+          result.message = responseData.message;
           // adding the interactionId in abstractData
           //   responseData.abstract.interactionID = responseData.interactionId;
           //   result.abstract = responseData.abstract;
