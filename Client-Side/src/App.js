@@ -189,10 +189,10 @@ function App() {
         <Login handleLogin={handleLoginChange} />
       )}
 
-      {state && !state.isLoading && !state.abstractData && <Instructions />}
-      {state && state.abstractData && (
+      {/* {state && !state.isLoading && !state.abstractData && <Instructions />} */}
+      {/* {state && state.abstractData && (
         <Abstracts abstracts={state.abstractData} />
-      )}
+      )} */}
 
       {/* <Abstracts abstract={abstract} /> */}
 
