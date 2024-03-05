@@ -1,6 +1,9 @@
 /*global chrome*/
 import React from "react";
 import "./aiagent.css";
+// import icon
+import { ArrowUpRight } from "react-bootstrap-icons";
+
 export default function AiAgent() {
   const textareaRef = React.useRef(null);
   const [initialQuestion, setInitialQuestion] = React.useState("");
@@ -25,13 +28,36 @@ export default function AiAgent() {
       },
       function (response) {
         console.log("ai response in front", response.aiResponse);
-        const newAiChat = {
-          sender: "ai",
-          message: response.aiResponse.suggestedKeywords,
-        };
-        setIsTyping(false);
 
-        setChatHistory((prevChatHistory) => [...prevChatHistory, newAiChat]);
+        // Split suggestedKeywords into an array of lines
+        const suggestedKeywordsArray =
+          response.aiResponse.suggestedKeywords.split("\n");
+        // Create a new chat message for each line
+        const newAiChats = suggestedKeywordsArray.map((keyword) => {
+          const searchQuery = keyword
+            .replace(/^\d+\.\s*"?(.*?)"?$/, "$1")
+            .replace(/\s+/g, "+"); // Replace spaces with '+'
+          const url = `https://pubmed.ncbi.nlm.nih.gov/?term=${searchQuery}`;
+          return {
+            sender: "ai",
+            message: (
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                {keyword}
+                <ArrowUpRight />
+              </a>
+            ),
+          };
+        });
+
+        // const newAiChat = {
+        //   sender: "ai",
+        //   message: response.aiResponse.suggestedKeywords,
+        // };
+        setIsTyping(false);
+        newAiChats.forEach((newChat) => {
+          setChatHistory((prevChatHistory) => [...prevChatHistory, newChat]);
+        });
+        // setChatHistory((prevChatHistory) => [...prevChatHistory, newAiChat]);
       }
     );
     // clear input field
@@ -45,40 +71,46 @@ export default function AiAgent() {
     }
   }
   return (
-    <div className="aiagent aiagent-container mt-5 ">
+    <div className="aiagent aiagent-container mt-3 ">
       {/* Render Chat History  */}
-      {chatHistory.map((chat, index) => (
-        <div
-          key={index}
-          className={`chat-container mt-1 ${
-            chat.sender === "ai" ? "ai" : "user"
-          }`}
-        >
-          {chat.sender === "user" ? (
-            <>
-              <div className="message">{chat.message}</div>
-              <div className="avatar"></div>
-            </>
-          ) : (
-            <>
-              <div className="avatar"></div>
-              <div className="message">{chat.message}</div>
-            </>
-          )}
-        </div>
-      ))}
-      {!isTyping && (
-        <>
-          <div className="chat-container mt-1 isTyping">
-            <div className="avatar"></div>
-            <div className="message ">
-              <div class="dot-elastic"></div>
-            </div>
+      <div className="chatbox">
+        {chatHistory.map((chat, index) => (
+          <div
+            key={index}
+            className={`chat-container mt-1 ${
+              chat.sender === "ai" ? "ai" : "user"
+            }`}
+          >
+            {chat.sender === "user" ? (
+              <>
+                <div className="message">{chat.message}</div>
+                <div className="avatar"></div>
+              </>
+            ) : (
+              <>
+                <div className="avatar"></div>
+                <div className="message">
+                  {chat.message}
+                  {/* {chat.message.split("\n").map((line) => (
+                  <span className="d-block">{line}</span>
+                ))} */}
+                </div>
+              </>
+            )}
           </div>
-        </>
-      )}
-
-      <div class="input-container mt-5">
+        ))}
+        {isTyping && (
+          <>
+            <div className="chat-container mt-1 isTyping">
+              <div className="avatar"></div>
+              <div className="message ">
+                <div class="dot-elastic"></div>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+      <div class="input-container mt-1">
         <textarea
           onChange={(e) => setInitialQuestion(e.target.value)}
           ref={textareaRef}

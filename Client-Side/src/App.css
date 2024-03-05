@@ -5,6 +5,8 @@
 .App {
   /* text-align: center; */
   /* min-width: 450px; */
+  display: flex;
+  flex-direction: column;
 }
 
 @import url("https://unpkg.com/style.css/style.css");
@@ -16,10 +18,11 @@
   --primary-font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --secondary-font: "Kanit", sans-serif;
 }
+
 body {
-  min-width: 360px;
   max-height: 100vh;
-  overflow-y: auto;
+  min-width: 360px;
+  overflow-y: hidden;
   position: sticky;
   top: 0;
 }

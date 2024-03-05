@@ -1,4 +1,23 @@
+/* to set the position of the elements  */
 .aiagent-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  /* flex-shrink: 1; */
+}
+.chatbox {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+.input-container {
+  flex-grow: 0;
+  height: fit-content;
+}
+
+.aiagent-container a {
+  text-decoration: none;
+  color: white;
 }
 .user {
   justify-content: flex-end;
@@ -47,8 +66,8 @@
   background-color: white;
   width: 100%;
   margin: auto;
-  position: fixed;
-  bottom: 0;
+  /* position: absolute;
+  bottom: 0; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -81,8 +100,8 @@
   width: 10px;
   height: 10px;
   border-radius: 5px;
-  background-color: var(--secondary-color);
-  color: var(--secondary-color);
+  background-color: var(--tertiary-color);
+  color: var(--tertiary-color);
   animation: dot-elastic 1s infinite linear;
 }
 .dot-elastic::before,
@@ -97,8 +116,8 @@
   width: 10px;
   height: 10px;
   border-radius: 5px;
-  background-color: var(--secondary-color);
-  color: var(--secondary-color);
+  background-color: var(--tertiary-color);
+  color: var(--tertiary-color);
   animation: dot-elastic-before 1s infinite linear;
 }
 .dot-elastic::after {
@@ -106,8 +125,8 @@
   width: 10px;
   height: 10px;
   border-radius: 5px;
-  background-color: var(--secondary-color);
-  color: var(--secondary-color);
+  background-color: var(--tertiary-color);
+  color: var(--tertiary-color);
   animation: dot-elastic-after 1s infinite linear;
 }
 
@@ -116,7 +135,7 @@
     transform: scale(1, 1);
   }
   25% {
-    transform: scale(1, 1.5);
+    transform: scale(1, 1.2);
   }
   50% {
     transform: scale(1, 0.67);
@@ -136,7 +155,7 @@
     transform: scale(1, 1);
   }
   50% {
-    transform: scale(1, 1.5);
+    transform: scale(1, 1.2);
   }
   75% {
     transform: scale(1, 1);
@@ -156,7 +175,7 @@
     transform: scale(1, 0.67);
   }
   75% {
-    transform: scale(1, 1.5);
+    transform: scale(1, 1.2);
   }
   100% {
     transform: scale(1, 1);
