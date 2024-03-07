@@ -72,22 +72,31 @@ let state = {
   // },
 };
 
-// This function acts when a tab is swtiched
+// URL CHANGE WITHIN THE SWTICHIN TAB
 chrome.tabs.onActivated.addListener(function (activeInfo) {
   chrome.tabs.get(activeInfo.tabId, function (tab) {
     // Access the tab URL
-    var url = tab.url;
-    console.log("Tab switched:", url);
+    console.log("Tab switched:", tab.url);
     // send a message to sidepanel for tab switch with the url
     chrome.runtime.sendMessage({
       action: "Tab Switched",
-      url,
+      url: tab.url,
     });
-    // You can send this URL to your content script or perform any other action here
   });
 });
+// URL CHANGE WITHIN THE SAME TAB
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  // Check if the URL has changed
+  if (changeInfo.url) {
+    console.log("URL changed:", changeInfo.url);
+    // Send a message to the side panel for the URL change
+    chrome.runtime.sendMessage({
+      action: "URL Changed",
+      url: changeInfo.url,
+    });
+  }
+});
 // UPON OPENING THE EXTENSION
-
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "firstOpen") {
     chrome.storage.local.get(["accessToken", "username"], function (data) {

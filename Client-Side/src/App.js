@@ -13,8 +13,8 @@ import "bootstrap/dist/css/bootstrap-grid.min.css"; // Only import the grid syst
 
 // var port = chrome.runtime.connect({ name: "popupConnection" });
 
-async function getTabInformation(currentTab) {
-  const response = await fetch(currentTab.url);
+async function getTabInformation(url) {
+  const response = await fetch(url);
   const text = await response.text();
   const parser = new DOMParser();
   // coverting html into a document
@@ -31,7 +31,7 @@ async function getTabInformation(currentTab) {
     .textContent.trim();
   // console.log(originalTitle, originalText);
   return {
-    url: currentTab.url,
+    url: url,
     originalAbstract: originalText,
     originalTitle: originalTitle,
   };
@@ -39,13 +39,13 @@ async function getTabInformation(currentTab) {
 
 function App() {
   const [username, setUsername] = React.useState(null);
-
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [state, setState] = React.useState(null);
   // console.log(state);
   const [currentTab, setCurrentTab] = React.useState(null);
   const [abstract, setAbstract] = React.useState(null);
 
+  // Send a message each time the sidepanel opens
   React.useEffect(() => {
     chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
       console.log("state upon open is", response.state);
@@ -58,6 +58,27 @@ function App() {
     });
   }, []);
 
+  // get the tab new information when tab is switched
+
+  React.useEffect(() => {
+    chrome.runtime.onMessage.addListener(async function (
+      message,
+      sender,
+      sendResponse
+    ) {
+      if (message.action === "Tab Switched") {
+        console.log("tab is swtiched and this is the new url,", message.url);
+        const abstractInfo = await getTabInformation(message.url);
+        setAbstract(abstractInfo);
+      }
+      if (message.action === "URL Changed") {
+        console.log("tab is swtiched and this is the new url,", message.url);
+        const abstractInfo = await getTabInformation(message.url);
+        setAbstract(abstractInfo);
+      }
+    });
+  }, []);
+
   React.useEffect(() => {
     chrome.runtime.onMessage.addListener(function (
       message,
@@ -66,19 +87,15 @@ function App() {
     ) {
       if (message.action === "updateState") {
         console.log("state will be update for the ");
-        // console.log("state:", message.state);
+        console.log(message.state);
+
         setState((prevState) => ({
           ...prevState,
           ...message.state,
         }));
-        // console.log(state);
-        // if (!message.state.accessToken) {
-        //   setAccessToken(null);
-        // }
-        // console.log(state);
       }
     });
-  }, [state]);
+  }, []);
 
   // This function will only run if username changes(if we enter a username)
   React.useEffect(() => {
@@ -120,7 +137,7 @@ function App() {
   }
 
   React.useEffect(() => {
-    console.log("abstract is", abstract);
+    console.log("new abstract", abstract);
   }, [abstract]);
 
   React.useEffect(() => {
@@ -132,7 +149,8 @@ function App() {
         });
         const currentTab = tabs[0];
         setCurrentTab(currentTab);
-        const abstractInfo = await getTabInformation(currentTab);
+        // send url to the function
+        const abstractInfo = await getTabInformation(currentTab.url);
         console.log(abstractInfo);
         setAbstract(abstractInfo);
         // Send a message to background script to get tab information and HTML content
