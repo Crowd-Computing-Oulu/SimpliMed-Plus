@@ -209,7 +209,7 @@ function App() {
       )}
 
       {state && !state.isLoading && !state.abstractData && <Instructions />}
-      {state && state.abstractData && (
+      {state && !state.isLoading && state.abstractData && (
         <Abstracts abstracts={state.abstractData} />
       )}
 
