@@ -3,6 +3,14 @@ import "./abstracts.css";
 
 export default function Abstracts({ abstracts }) {
   const [version, setVersion] = React.useState(0);
+  // split the paragphras instead of a block of text
+  function split(abstract) {
+    const paragraphs = abstract.split("\n");
+    const allParagraphs = paragraphs.map((paragraph, index) => {
+      return <p key={index}>{paragraph}</p>;
+    });
+    return allParagraphs;
+  }
   function handleSliderChange(e) {
     // change the value from string to integer
     setVersion(parseInt(e.target.value));
@@ -14,7 +22,6 @@ export default function Abstracts({ abstracts }) {
           Change the version of the abstract
         </span>
         <div className="difficulty-lvl__slider">
-          <label for="slider"></label>
           <input
             type="range"
             id="difficulty-lvl__input"
@@ -71,13 +78,15 @@ export default function Abstracts({ abstracts }) {
         )}
 
         {version === 1 && (
-          <p className="elementary-abs">{abstracts.elementaryAbstract}</p>
+          <p className="elementary-abs">
+            {split(abstracts.elementaryAbstract)}
+          </p>
         )}
         {version === 2 && (
-          <p className="advanced-abs">{abstracts.advancedAbstract}</p>
+          <p className="advanced-abs">{split(abstracts.advancedAbstract)}</p>
         )}
         {/* {version === 3 && (
-          <h4 className="original-abs">{abstracts.originalAbstract}</h4>
+          <h4 className="original-abs">{split(abstracts.originalAbstract)}</h4>
         )} */}
       </div>
     </div>
