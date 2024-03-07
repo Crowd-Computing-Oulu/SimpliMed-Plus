@@ -72,9 +72,22 @@ let state = {
   // },
 };
 
+// This function acts when a tab is swtiched
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+  chrome.tabs.get(activeInfo.tabId, function (tab) {
+    // Access the tab URL
+    var url = tab.url;
+    console.log("Tab switched:", url);
+    // send a message to sidepanel for tab switch with the url
+    chrome.runtime.sendMessage({
+      action: "Tab Switched",
+      url,
+    });
+    // You can send this URL to your content script or perform any other action here
+  });
+});
 // UPON OPENING THE EXTENSION
 
-// chrome.runtime.sendMessage("updateState", state);
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "firstOpen") {
     chrome.storage.local.get(["accessToken", "username"], function (data) {
@@ -163,7 +176,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       chrome.runtime.sendMessage({ action: "updateState", state });
 
       // try {
-      requestSummary(message.abstract)
+      requestSummary(message.tabAbstract)
         .then((result) => {
           state.isLoading = false;
           state.abstractData = result.abstract;
@@ -181,7 +194,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
               "You have already read this article and submitted your answers. If there are remaining daily submissions, choose another article!";
           }
           sendResponse({
-            response: "Successful Response",
+            response: "Successful",
             state: state,
           });
         })

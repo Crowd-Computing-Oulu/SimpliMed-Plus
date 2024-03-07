@@ -8,7 +8,7 @@ import Login from "./Components/Login";
 import Instructions from "./Components/Instructions";
 import Abstracts from "./Components/Abstracts";
 import AiAgent from "./Components/AiAgent";
-import GetAbstractBtn from "./Components/GetAbstractBtn";
+import GetSummary from "./Components/GetSummary";
 import "bootstrap/dist/css/bootstrap-grid.min.css"; // Only import the grid system to avoid losing icons
 
 // var port = chrome.runtime.connect({ name: "popupConnection" });
@@ -40,7 +40,7 @@ async function getTabInformation(currentTab) {
 function App() {
   const [username, setUsername] = React.useState(null);
 
-  const [accessToken, setAccessToken] = React.useState(null);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [state, setState] = React.useState(null);
   // console.log(state);
   const [currentTab, setCurrentTab] = React.useState(null);
@@ -96,6 +96,7 @@ function App() {
               ...prevState,
               ...response.state,
             }));
+            setIsLoggedIn(true);
           }
         );
       }
@@ -181,20 +182,18 @@ function App() {
         <>
           <Header state={state} handleLogout={handleLogoutChange} />
           {abstract && state && !state.isLoading && (
-            <GetAbstractBtn setState={setState} abstract={abstract} />
+            <GetSummary setState={setState} tabAbstract={abstract} />
           )}
-          <AiAgent />
+          {/* <AiAgent /> */}
         </>
       ) : (
         <Login handleLogin={handleLoginChange} />
       )}
 
-      {/* {state && !state.isLoading && !state.abstractData && <Instructions />} */}
-      {/* {state && state.abstractData && (
+      {state && !state.isLoading && !state.abstractData && <Instructions />}
+      {state && state.abstractData && (
         <Abstracts abstracts={state.abstractData} />
-      )} */}
-
-      {/* <Abstracts abstract={abstract} /> */}
+      )}
 
       {state && state.isLoading ? <Loading /> : ""}
 
