@@ -20,9 +20,11 @@
 }
 
 body {
-  max-height: 100vh;
+  max-height: fit-content;
   min-width: 360px;
-  overflow-y: hidden;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
   position: sticky;
   top: 0;
 }
