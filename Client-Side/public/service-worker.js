@@ -174,6 +174,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     return true;
   }
   if (message.action === "summaryRequest") {
+    console.log("new summary has been requested");
     if (state.accessToken) {
       // All the information from the previous abstract will be deleted from the state
       delete state.abstractData;
