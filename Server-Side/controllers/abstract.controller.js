@@ -247,12 +247,10 @@ exports.requestKeywords = async (req, res) => {
   return;
 };
 async function requestKeywords(req) {
-  console.log("the request for keywords in server is:", req.body);
-
   const suggestKeywordsPrompt =
-    "Suggues few keywords to search for articles in pubmed database:";
+    "Sugguest 5 keywords to search for articles in pubmed database based on this question:";
   const systemPrompt =
-    "You suggest keywords in pubmed domain to help people search articles in pubmed database";
+    "You suggest keywords in medical domain to help people search articles in pubmed database";
 
   const suggestedKeywords = await requestToOpenAI(
     req.body.initialQuestion,
