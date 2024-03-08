@@ -13,35 +13,9 @@ import "bootstrap/dist/css/bootstrap-grid.min.css"; // Only import the grid syst
 import { getTabInformation, updateState } from "./utils";
 // var port = chrome.runtime.connect({ name: "popupConnection" });
 
-// async function getTabInformation(url) {
-//   const response = await fetch(url);
-//   const text = await response.text();
-//   const parser = new DOMParser();
-//   // coverting html into a document
-//   const doc = parser.parseFromString(text, "text/html");
-//   // to add all paraghraphs when we have different p for background, methods,...
-//   const paragraphs = doc.querySelectorAll("div.abstract-content p");
-//   let allParagraphs = "";
-//   for (let i = 0; i < paragraphs.length; i++) {
-//     allParagraphs += paragraphs[i].textContent;
-//   }
-//   var originalText = allParagraphs;
-//   var originalTitle = doc
-//     .getElementsByClassName("heading-title")[0]
-//     .textContent.trim();
-//   // console.log(originalTitle, originalText);
-//   return {
-//     url: url,
-//     originalAbstract: originalText,
-//     originalTitle: originalTitle,
-//   };
-// }
-
 function App() {
   const [username, setUsername] = React.useState(null);
   const [state, setState] = React.useState(null);
-  // console.log(state);
-  // const [currentTab, setCurrentTab] = React.useState(null);
   const [abstract, setAbstract] = React.useState(null);
 
   // Send a message each time the sidepanel opens
@@ -134,7 +108,6 @@ function App() {
           currentWindow: true,
         });
         const currentTab = tabs[0];
-        // setCurrentTab(tabs[0]);
         // send url to the function and get url, originaltitle and originalabstract
         const abstractInfo = await getTabInformation(currentTab.url);
         setAbstract(abstractInfo);
@@ -147,22 +120,22 @@ function App() {
   }, []);
 
   // what is the pint of this
-  React.useEffect(() => {
-    chrome.storage.local.get(["accessToken", "username"], (data) => {
-      if (data.accessToken) {
-        console.log("storage is", data);
-        // This needs to be checked
-        updateState(setState, data);
+  // React.useEffect(() => {
+  //   chrome.storage.local.get(["accessToken", "username"], (data) => {
+  //     if (data.accessToken) {
+  //       console.log("storage is", data);
+  //       // This needs to be checked
+  //       updateState(setState, data);
 
-        // setState((prevState) => ({
-        //   ...prevState,
-        //   username: data.username,
-        //   accessToken: data.accessToken,
-        // }));
-        // setAccessToken(data.accessToken);
-      }
-    });
-  }, []);
+  //       // setState((prevState) => ({
+  //       //   ...prevState,
+  //       //   username: data.username,
+  //       //   accessToken: data.accessToken,
+  //       // }));
+  //       // setAccessToken(data.accessToken);
+  //     }
+  //   });
+  // }, []);
   // end of the point
 
   return (
@@ -173,7 +146,7 @@ function App() {
           {abstract && state && !state.isLoading && (
             <GetSummary setState={setState} tabAbstract={abstract} />
           )}
-          {/* <AiAgent /> */}
+          <AiAgent />
         </>
       ) : (
         <Login handleLogin={handleLoginChange} />
@@ -185,8 +158,6 @@ function App() {
       )}
 
       {state && state.isLoading ? <Loading /> : ""}
-
-      {/* <h1 className="app-blue">RReady to build the SimpliMed plus</h1> */}
     </div>
   );
 }
