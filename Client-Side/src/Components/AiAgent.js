@@ -49,15 +49,10 @@ export default function AiAgent() {
           };
         });
 
-        // const newAiChat = {
-        //   sender: "ai",
-        //   message: response.aiResponse.suggestedKeywords,
-        // };
         setIsTyping(false);
         newAiChats.forEach((newChat) => {
           setChatHistory((prevChatHistory) => [...prevChatHistory, newChat]);
         });
-        // setChatHistory((prevChatHistory) => [...prevChatHistory, newAiChat]);
       }
     );
     // clear input field
@@ -71,7 +66,7 @@ export default function AiAgent() {
     }
   }
   return (
-    <div className="aiagent aiagent-container mt-3 ">
+    <div className="aiagent aiagent-container mt-1 ">
       {/* Render Chat History  */}
       <div className="chatbox">
         {chatHistory.map((chat, index) => (
@@ -89,12 +84,7 @@ export default function AiAgent() {
             ) : (
               <>
                 <div className="avatar"></div>
-                <div className="message">
-                  {chat.message}
-                  {/* {chat.message.split("\n").map((line) => (
-                  <span className="d-block">{line}</span>
-                ))} */}
-                </div>
+                <div className="message">{chat.message}</div>
               </>
             )}
           </div>
