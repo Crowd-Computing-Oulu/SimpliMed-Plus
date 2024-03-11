@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./login.css";
-
-export default function Login({ handleLogin }) {
+import AppContext from "../App";
+export default function Login() {
   const [username, setUsername] = React.useState("");
-
+  const handleLogin = useContext(AppContext).handleLoginChange;
   return (
     <div className="login-container" id="login-container">
       <h2 className="mt-5">Sign in with your Prolific username</h2>

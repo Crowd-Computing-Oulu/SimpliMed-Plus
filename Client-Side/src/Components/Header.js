@@ -1,9 +1,14 @@
 /*global chrome */
-import React from "react";
+import React, { useContext } from "react";
 import "./header.css";
 import { DoorClosed } from "react-bootstrap-icons";
-export default function Header({ state, handleLogout }) {
-  console.log(state, "state in header is");
+import { AppContext } from "../App";
+export default function Header() {
+  // const state = useContext(AppContext);
+  // console.log(state, "state in header is");
+  const context = React.useContext(AppContext);
+  const state = context.state;
+  const handleLogout = context.handleLogoutChange;
 
   return (
     <div id="header" className="hiddenn header">

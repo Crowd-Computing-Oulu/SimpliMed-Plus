@@ -1,21 +1,16 @@
 /*global chrome*/
 
-import React from "react";
+import React, { createContext } from "react";
 import {
   Route,
   RouterProvider,
   createRoutesFromElements,
-  createBrowserRouter,
   createMemoryRouter,
 } from "react-router-dom";
 import "./App.css";
-import Header from "./Components/Header";
-import Loading from "./Components/Loading";
+
 import Login from "./Components/Login";
-import Instructions from "./Components/Instructions";
-import Abstracts from "./Components/Abstracts";
 import AiAgent from "./Components/AiAgent";
-import GetSummary from "./Components/GetSummary";
 import Main from "./Components/Main";
 
 // import Navigation from "./Components/Navigation";
@@ -24,9 +19,10 @@ import "bootstrap/dist/css/bootstrap-grid.min.css"; // Only import the grid syst
 import { getTabInformation, updateState } from "./utils";
 import Error from "./pages/Error";
 // var port = chrome.runtime.connect({ name: "popupConnection" });
+export const AppContext = createContext();
 
 function App() {
-  const [username, setUsername] = React.useState(null);
+  const [submittedUsername, setSubmittedUsername] = React.useState(null);
   const [state, setState] = React.useState(null);
   const [abstract, setAbstract] = React.useState(null);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
@@ -83,9 +79,9 @@ function App() {
   // This function will only run if username changes(if we enter a username)
   React.useEffect(() => {
     async function sendMessage() {
-      if (username !== null) {
+      if (submittedUsername !== null) {
         chrome.runtime.sendMessage(
-          { action: "loginRequest", username },
+          { action: "loginRequest", submittedUsername },
           async function (response) {
             // This will update the state after the login was successfull
             // response state contains the token and the username here
@@ -96,11 +92,11 @@ function App() {
     }
 
     sendMessage(); // Call the async function to send the message
-  }, [username]);
+  }, [submittedUsername]);
 
   // callback function to receive the username from Login component
   function handleLoginChange(submittedUsername) {
-    setUsername(submittedUsername);
+    setSubmittedUsername(submittedUsername);
   }
   function handleLogoutChange() {
     console.log("user has logged out");
@@ -108,10 +104,6 @@ function App() {
     setState(null);
     chrome.runtime.sendMessage({ action: "logoutRequest" });
   }
-
-  React.useEffect(() => {
-    console.log("new abstract", abstract);
-  }, [abstract]);
 
   React.useEffect(() => {
     const fetchTabData = async () => {
@@ -133,36 +125,31 @@ function App() {
 
   const router = createMemoryRouter(
     createRoutesFromElements(
-      <Route
-        path="/"
-        errorElement={<Error />}
-        element={
-          state && <Layout state={state} handleLogout={handleLogoutChange} />
-        }
-      >
+      <Route path="/" errorElement={<Error />} element={state && <Layout />}>
         <Route
           path="/login"
           errorElement={<Error />}
-          element={
-            !isLoggedIn ? <Login handleLogin={handleLoginChange} /> : null
-          }
+          element={!isLoggedIn ? <Login /> : null}
         />
         <Route path="/aiagent" errorElement={<Error />} element={<AiAgent />} />
-        <Route
-          path="/main"
-          errorElement={<Error />}
-          element={
-            <Main state={state} abstract={abstract} setState={setState} />
-          }
-        />
+        <Route path="/main" errorElement={<Error />} element={<Main />} />
       </Route>
     )
   );
 
   return (
     <div className="App">
-      <RouterProvider router={router} />
-
+      <AppContext.Provider
+        value={{
+          state,
+          setState,
+          handleLoginChange,
+          handleLogoutChange,
+          abstract,
+        }}
+      >
+        <RouterProvider router={router} />
+      </AppContext.Provider>
       {/* {
         state && state.accessToken ? (
           <>

@@ -1,11 +1,14 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
 
 import GetSummary from "./GetSummary";
 import Abstracts from "./Abstracts";
 import Loading from "./Loading";
-
-export default function Main({ state, setState, abstract }) {
+import { AppContext } from "../App";
+export default function Main() {
+  const context = React.useContext(AppContext);
+  const state = context.state;
+  const abstract = context.abstract;
+  const setState = context.setState;
   return (
     <>
       <GetSummary setState={setState} tabAbstract={abstract} />
@@ -13,7 +16,6 @@ export default function Main({ state, setState, abstract }) {
         <Abstracts abstracts={state.abstractData} />
       )}
       {state && state.isLoading ? <Loading /> : null}
-      {/* <Outlet /> */}
     </>
   );
 }
