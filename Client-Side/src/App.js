@@ -1,6 +1,14 @@
 /*global chrome*/
 
 import React from "react";
+import {
+  createMemoryRouter,
+  BrowserRouter,
+  RouterProvider,
+  MemoryRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 import "./App.css";
 import Header from "./Components/Header";
 import Loading from "./Components/Loading";
@@ -12,6 +20,10 @@ import GetSummary from "./Components/GetSummary";
 import "bootstrap/dist/css/bootstrap-grid.min.css"; // Only import the grid system to avoid losing icons
 import { getTabInformation, updateState } from "./utils";
 import Navigation from "./Components/Navigation";
+import Error from "./Components/Error";
+import Test1 from "./Components/Test1";
+import Test2 from "./Components/Test2";
+import { Memory } from "react-bootstrap-icons";
 // var port = chrome.runtime.connect({ name: "popupConnection" });
 export const AppContext = React.createContext();
 function App() {
@@ -138,7 +150,24 @@ function App() {
   //   });
   // }, []);
   // end of the point
+  // React Router Dom
 
+  const router = createMemoryRouter(
+    [
+      {
+        path: "/",
+        element: <Navigation />,
+        children: [
+          { path: "getsummary", element: <GetSummary /> },
+          { path: "aiagent", element: <AiAgent /> },
+        ],
+      },
+    ],
+    {
+      initialEntries: ["/", "/navigation"], // The initial URLs in the history stack
+      initialIndex: 0, // The initial location's index in the history stack
+    }
+  );
   return (
     <div className="App">
       <AppContext.Provider
@@ -150,7 +179,27 @@ function App() {
           abstract,
         }}
       >
-        {state && state.accessToken ? (
+        <MemoryRouter>
+          <Routes>
+            <Route path="/" errorElement={<Error />} element={<Navigation />} />
+            {/* <Route path="*" element={<Login />} /> */}
+            <Route path="/test1" errorElement={<Error />} element={<Test1 />} />
+
+            <Route path="/test2" errorElement={<Error />} element={<Test2 />} />
+
+            <Route
+              path="/getsummary"
+              errorElement={<Error />}
+              element={<GetSummary />}
+            />
+            <Route
+              path="/aiagent"
+              errorElement={<Error />}
+              element={<AiAgent />}
+            />
+          </Routes>
+        </MemoryRouter>
+        {/* {state && state.accessToken ? (
           <>
             <Header />
             <Navigation />
@@ -166,7 +215,7 @@ function App() {
           <Abstracts abstracts={state.abstractData} />
         )}
 
-        {state && state.isLoading ? <Loading /> : ""}
+        {state && state.isLoading ? <Loading /> : ""} */}
       </AppContext.Provider>
     </div>
   );
