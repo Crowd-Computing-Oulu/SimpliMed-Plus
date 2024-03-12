@@ -2,6 +2,7 @@
 import React from "react";
 import { Tooltip } from "bootstrap";
 import { AppContext } from "../App";
+import { updateState } from "../utils";
 export default function GetSummary() {
   const { setState, abstract } = React.useContext(AppContext);
 
@@ -34,7 +35,7 @@ export default function GetSummary() {
   // }, [isDisabled]);
 
   async function getSummary() {
-    console.log("the abstract in btn is", abstract);
+    console.log("request a new  abstract", abstract);
     chrome.runtime.sendMessage(
       {
         action: "summaryRequest",
@@ -49,10 +50,7 @@ export default function GetSummary() {
           setError("There was an error, please try again");
         }
         console.log("response in btn", response);
-        setState((prevState) => ({
-          ...prevState,
-          ...response.state,
-        }));
+        updateState(setState, response.state);
       }
     );
   }
