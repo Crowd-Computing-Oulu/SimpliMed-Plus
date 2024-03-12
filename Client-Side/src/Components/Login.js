@@ -1,17 +1,17 @@
 import React from "react";
 import "./login.css";
-
-export default function Login({ handleLogin }) {
+import { AppContext } from "../App";
+export default function Login() {
   const [username, setUsername] = React.useState("");
-
+  const { handleLoginChange } = React.useContext(AppContext);
+  function handleSubmit(e) {
+    e.preventDefault();
+    handleLoginChange(username);
+  }
   return (
     <div className="login-container" id="login-container">
       <h2 className="mt-5">Sign in with your Prolific username</h2>
-      <form
-        className="mt-5"
-        id="login-form"
-        onSubmit={(e) => e.preventDefault()}
-      >
+      <form className="mt-5" id="login-form" onSubmit={handleSubmit}>
         <input
           type="text"
           id="username"
@@ -21,9 +21,7 @@ export default function Login({ handleLogin }) {
           required
         />
         {/* Passing the new username to the app component  */}
-        <button onClick={() => handleLogin(username)} type="submit">
-          Sign In
-        </button>
+        <button type="submit">Sign In</button>
       </form>
     </div>
   );

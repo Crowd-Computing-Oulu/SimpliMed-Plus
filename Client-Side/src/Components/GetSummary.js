@@ -1,7 +1,10 @@
 /*global chrome*/
 import React from "react";
 import { Tooltip } from "bootstrap";
-export default function GetSummary({ setState, tabAbstract }) {
+import { AppContext } from "../App";
+export default function GetSummary() {
+  const { setState, abstract } = React.useContext(AppContext);
+
   const style = {
     backgroundColor: "var(--secondary-color)",
     width: "80%",
@@ -31,11 +34,11 @@ export default function GetSummary({ setState, tabAbstract }) {
   // }, [isDisabled]);
 
   async function getSummary() {
-    console.log("the abstract in btn is", tabAbstract);
+    console.log("the abstract in btn is", abstract);
     chrome.runtime.sendMessage(
       {
         action: "summaryRequest",
-        tabAbstract,
+        tabAbstract: abstract,
       },
       (response) => {
         if (response.response === "Successful") {

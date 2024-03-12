@@ -11,8 +11,9 @@ import AiAgent from "./Components/AiAgent";
 import GetSummary from "./Components/GetSummary";
 import "bootstrap/dist/css/bootstrap-grid.min.css"; // Only import the grid system to avoid losing icons
 import { getTabInformation, updateState } from "./utils";
+import Navigation from "./Components/Navigation";
 // var port = chrome.runtime.connect({ name: "popupConnection" });
-
+export const AppContext = React.createContext();
 function App() {
   const [username, setUsername] = React.useState(null);
   const [state, setState] = React.useState(null);
@@ -140,24 +141,33 @@ function App() {
 
   return (
     <div className="App">
-      {state && state.accessToken ? (
-        <>
-          <Header state={state} handleLogout={handleLogoutChange} />
-          {abstract && state && !state.isLoading && (
-            <GetSummary setState={setState} tabAbstract={abstract} />
-          )}
-          <AiAgent />
-        </>
-      ) : (
-        <Login handleLogin={handleLoginChange} />
-      )}
+      <AppContext.Provider
+        value={{
+          state,
+          setState,
+          handleLoginChange,
+          handleLogoutChange,
+          abstract,
+        }}
+      >
+        {state && state.accessToken ? (
+          <>
+            <Header />
+            <Navigation />
+            {abstract && state && !state.isLoading && <GetSummary />}
+            <AiAgent />
+          </>
+        ) : (
+          <Login />
+        )}
 
-      {state && !state.isLoading && !state.abstractData && <Instructions />}
-      {state && !state.isLoading && state.abstractData && (
-        <Abstracts abstracts={state.abstractData} />
-      )}
+        {state && !state.isLoading && !state.abstractData && <Instructions />}
+        {state && !state.isLoading && state.abstractData && (
+          <Abstracts abstracts={state.abstractData} />
+        )}
 
-      {state && state.isLoading ? <Loading /> : ""}
+        {state && state.isLoading ? <Loading /> : ""}
+      </AppContext.Provider>
     </div>
   );
 }

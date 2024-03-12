@@ -2,9 +2,10 @@
 import React from "react";
 import "./header.css";
 import { DoorClosed } from "react-bootstrap-icons";
-export default function Header({ state, handleLogout }) {
+import { AppContext } from "../App";
+export default function Header() {
+  const { state, handleLogoutChange } = React.useContext(AppContext);
   console.log(state, "state in header is");
-
   return (
     <div id="header" className="hiddenn header">
       <div className="d-flex flex-row justify-content-between">
@@ -13,7 +14,7 @@ export default function Header({ state, handleLogout }) {
           <span className="tooltipUsernameText">Prolific Username</span>
         </span>
         <span
-          onClick={handleLogout}
+          onClick={handleLogoutChange}
           className="logoutIcon-container tooltip"
           id="logoutBtn"
         >

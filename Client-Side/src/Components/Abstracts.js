@@ -1,7 +1,9 @@
 import React from "react";
 import "./abstracts.css";
-
-export default function Abstracts({ abstracts }) {
+import { AppContext } from "../App";
+export default function Abstracts() {
+  const { state } = React.useContext(AppContext);
+  const abstracts = state.abstractData;
   const [version, setVersion] = React.useState(0);
   // split the paragphras instead of a block of text
   function split(abstract) {
