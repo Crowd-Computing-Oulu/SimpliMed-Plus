@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 // import { NavLink } from "react-router-dom";
 export default function Navigation() {
   const navLinkStyle = {
@@ -26,23 +27,23 @@ export default function Navigation() {
         style={{ ...navStyle, boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
         width="100%"
       >
-        <a
-          href="/aiagent"
+        <NavLink
+          to="/test1"
           // style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
           style={navLinkStyle}
         >
           Chat
-        </a>
+        </NavLink>
         <span
           style={{ borderRight: "3px solid #c9c9c9", height: "3rem" }}
         ></span>
-        <a
-          href="/main"
+        <NavLink
+          to="/test2"
           // style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
           style={navLinkStyle}
         >
           Main
-        </a>
+        </NavLink>
       </nav>
     </>
   );
