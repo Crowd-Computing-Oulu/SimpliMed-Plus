@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
-import { AppContext } from "../App";
 export default function Navigation() {
   const navLinkStyle = {
     textDecoration: "none",
@@ -17,13 +16,11 @@ export default function Navigation() {
     fontWeight: "bolder",
   };
   const navStyle = {
-    // backgroundColor: "lightgrey",
     padding: "0.5rem",
     borderBottom: "3px solid #c9c9c9",
   };
   return (
     <>
-      {/* <p>I am the state {state.accesToken}</p> */}
       <nav
         className="d-flex flex-row align-items-center justify-content-around"
         style={{ ...navStyle, boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
