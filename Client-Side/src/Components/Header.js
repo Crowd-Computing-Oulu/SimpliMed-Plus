@@ -3,6 +3,7 @@ import React from "react";
 import "./header.css";
 import { DoorClosed } from "react-bootstrap-icons";
 import { AppContext } from "../App";
+import { NavLink } from "react-router-dom";
 export default function Header() {
   const { state, handleLogoutChange } = React.useContext(AppContext);
   console.log(state, "state in header is");
@@ -13,15 +14,13 @@ export default function Header() {
           {state.username}
           <span className="tooltipUsernameText">Prolific Username</span>
         </span>
-        <span
-          onClick={handleLogoutChange}
-          className="logoutIcon-container tooltip"
-          id="logoutBtn"
-        >
-          <i className="bi bi-box-arrow-right"></i>
-          <DoorClosed size="1.4rem" color="white" />
-          <span className="tooltipText">Logout</span>
-        </span>
+        <NavLink to="/Login" onClick={handleLogoutChange}>
+          <span className="logoutIcon-container tooltip" id="logoutBtn">
+            <i className="bi bi-box-arrow-right"></i>
+            <DoorClosed size="1.4rem" color="white" />
+            <span className="tooltipText">Logout</span>
+          </span>
+        </NavLink>
       </div>
 
       {state.remainingFeedbacks === 0 && (
