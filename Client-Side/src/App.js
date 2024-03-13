@@ -23,6 +23,9 @@ import Navigation from "./Components/Navigation";
 import Error from "./Components/Error";
 import Test1 from "./Components/Test1";
 import Test2 from "./Components/Test2";
+import Layout from "./Components/Layout";
+import Main from "./Components/Main";
+
 import { Memory } from "react-bootstrap-icons";
 // var port = chrome.runtime.connect({ name: "popupConnection" });
 export const AppContext = React.createContext();
@@ -132,24 +135,6 @@ function App() {
     // console.log(abstract);
   }, []);
 
-  // what is the pint of this
-  // React.useEffect(() => {
-  //   chrome.storage.local.get(["accessToken", "username"], (data) => {
-  //     if (data.accessToken) {
-  //       console.log("storage is", data);
-  //       // This needs to be checked
-  //       updateState(setState, data);
-
-  //       // setState((prevState) => ({
-  //       //   ...prevState,
-  //       //   username: data.username,
-  //       //   accessToken: data.accessToken,
-  //       // }));
-  //       // setAccessToken(data.accessToken);
-  //     }
-  //   });
-  // }, []);
-  // end of the point
   // React Router Dom
 
   const router = createMemoryRouter(
@@ -181,41 +166,27 @@ function App() {
       >
         <MemoryRouter>
           <Routes>
-            <Route path="/" errorElement={<Error />} element={<Navigation />} />
-            {/* <Route path="*" element={<Login />} /> */}
-            <Route path="/test1" errorElement={<Error />} element={<Test1 />} />
-
-            <Route path="/test2" errorElement={<Error />} element={<Test2 />} />
-
             <Route
-              path="/getsummary"
+              path="/"
               errorElement={<Error />}
-              element={<GetSummary />}
-            />
-            <Route
-              path="/aiagent"
-              errorElement={<Error />}
-              element={<AiAgent />}
-            />
+              // element={!state && <Login />}
+
+              element={state && <Layout />}
+            >
+              <Route
+                path="/aiagent"
+                errorElement={<Error />}
+                element={<AiAgent />}
+              />
+              <Route
+                path="/Login"
+                errorElement={<Error />}
+                element={<Login />}
+              />
+              <Route path="/main" errorElement={<Error />} element={<Main />} />
+            </Route>
           </Routes>
         </MemoryRouter>
-        {/* {state && state.accessToken ? (
-          <>
-            <Header />
-            <Navigation />
-            {abstract && state && !state.isLoading && <GetSummary />}
-            <AiAgent />
-          </>
-        ) : (
-          <Login />
-        )}
-
-        {state && !state.isLoading && !state.abstractData && <Instructions />}
-        {state && !state.isLoading && state.abstractData && (
-          <Abstracts abstracts={state.abstractData} />
-        )}
-
-        {state && state.isLoading ? <Loading /> : ""} */}
       </AppContext.Provider>
     </div>
   );
