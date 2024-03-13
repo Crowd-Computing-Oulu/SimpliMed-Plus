@@ -26,6 +26,7 @@ import Test1 from "./Components/Test1";
 import Test2 from "./Components/Test2";
 import Layout from "./Components/Layout";
 import Main from "./Components/Main";
+import AuthRequired from "./Components/AuthRequired";
 
 import { Memory } from "react-bootstrap-icons";
 // var port = chrome.runtime.connect({ name: "popupConnection" });
@@ -144,12 +145,17 @@ function App() {
         path="/"
         errorElement={<Error />}
         // element={!state && <Login />}
-
         element={state && <Layout />}
       >
-        <Route path="/aiagent" errorElement={<Error />} element={<AiAgent />} />
-        <Route path="/Login" errorElement={<Error />} element={<Login />} />
-        <Route path="/main" errorElement={<Error />} element={<Main />} />
+        <Route path="login" errorElement={<Error />} element={<Login />} />
+        <Route element={<AuthRequired />}>
+          <Route
+            path="aiagent"
+            errorElement={<Error />}
+            element={<AiAgent />}
+          />
+          <Route path="main" errorElement={<Error />} element={<Main />} />
+        </Route>
       </Route>
     )
   );
