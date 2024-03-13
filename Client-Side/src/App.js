@@ -8,6 +8,7 @@ import {
   MemoryRouter,
   Routes,
   Route,
+  createRoutesFromElements,
 } from "react-router-dom";
 import "./App.css";
 import Header from "./Components/Header";
@@ -138,20 +139,19 @@ function App() {
   // React Router Dom
 
   const router = createMemoryRouter(
-    [
-      {
-        path: "/",
-        element: <Navigation />,
-        children: [
-          { path: "getsummary", element: <GetSummary /> },
-          { path: "aiagent", element: <AiAgent /> },
-        ],
-      },
-    ],
-    {
-      initialEntries: ["/", "/navigation"], // The initial URLs in the history stack
-      initialIndex: 0, // The initial location's index in the history stack
-    }
+    createRoutesFromElements(
+      <Route
+        path="/"
+        errorElement={<Error />}
+        // element={!state && <Login />}
+
+        element={state && <Layout />}
+      >
+        <Route path="/aiagent" errorElement={<Error />} element={<AiAgent />} />
+        <Route path="/Login" errorElement={<Error />} element={<Login />} />
+        <Route path="/main" errorElement={<Error />} element={<Main />} />
+      </Route>
+    )
   );
   return (
     <div className="App">
@@ -164,29 +164,7 @@ function App() {
           abstract,
         }}
       >
-        <MemoryRouter>
-          <Routes>
-            <Route
-              path="/"
-              errorElement={<Error />}
-              // element={!state && <Login />}
-
-              element={state && <Layout />}
-            >
-              <Route
-                path="/aiagent"
-                errorElement={<Error />}
-                element={<AiAgent />}
-              />
-              <Route
-                path="/Login"
-                errorElement={<Error />}
-                element={<Login />}
-              />
-              <Route path="/main" errorElement={<Error />} element={<Main />} />
-            </Route>
-          </Routes>
-        </MemoryRouter>
+        <RouterProvider router={router} />
       </AppContext.Provider>
     </div>
   );
