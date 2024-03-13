@@ -94,13 +94,13 @@ export default function AiAgent() {
             <div className="chat-container mt-1 isTyping">
               <div className="avatar"></div>
               <div className="message ">
-                <div class="dot-elastic"></div>
+                <div className="dot-elastic"></div>
               </div>
             </div>
           </>
         )}
       </div>
-      <div class="input-container mt-1">
+      <div className="input-container mt-1">
         <textarea
           onChange={(e) => setInitialQuestion(e.target.value)}
           ref={textareaRef}
