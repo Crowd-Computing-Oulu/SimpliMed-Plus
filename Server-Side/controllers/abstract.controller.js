@@ -27,7 +27,7 @@ async function requestToOpenAI(text, systemPrompt, userPrompt) {
   };
 
   try {
-    const response = await axios.post(
+    const responsePromise = axios.post(
       "https://api.openai.com/v1/chat/completions",
       payload,
       {
@@ -37,9 +37,24 @@ async function requestToOpenAI(text, systemPrompt, userPrompt) {
         },
       }
     );
+
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error("Timeout: Request took too long to complete"));
+      }, 120000); //Time in milliseconds
+    });
+
+    const response = await Promise.race([responsePromise, timeoutPromise]);
+
+    if (response instanceof Error) {
+      // If response is an Error object (i.e., timeout error)
+      throw response;
+    }
+
     if (response.status !== 200) {
       throw new Error(`Error code: ${response.status}. ${response.data}`);
     }
+
     const message = response.data.choices[0].message.content;
     let result = { message: message, status: "Ok" };
     return result;
@@ -48,6 +63,7 @@ async function requestToOpenAI(text, systemPrompt, userPrompt) {
     return result;
   }
 }
+
 //
 
 exports.submitFeedback = async (req, res) => {
