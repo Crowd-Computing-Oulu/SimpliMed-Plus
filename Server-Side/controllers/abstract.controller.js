@@ -103,7 +103,7 @@ exports.submitFeedback = async (req, res) => {
 };
 
 ////
-async function requestResults(req) {
+async function requestSummary(req) {
   console.log("the request in server is:", req.body);
 
   const systemPrompt =
@@ -162,7 +162,7 @@ exports.requestAbstract = async (req, res) => {
   if (abstract == null) {
     console.log("Creating a new Abstract Record.");
     // add api call
-    const results = await requestResults(req);
+    const results = await requestSummary(req);
     console.log("this is final results", results);
     //
     abstract = new Abstract({
