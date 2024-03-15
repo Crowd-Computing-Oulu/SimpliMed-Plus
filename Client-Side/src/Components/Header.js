@@ -1,4 +1,3 @@
-/*global chrome */
 import React from "react";
 import "./header.css";
 import { DoorClosed } from "react-bootstrap-icons";
