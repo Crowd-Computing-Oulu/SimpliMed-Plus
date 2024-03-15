@@ -7,6 +7,7 @@ import {
   RouterProvider,
   MemoryRouter,
   Routes,
+  redirect,
   Route,
   createRoutesFromElements,
 } from "react-router-dom";
@@ -63,6 +64,8 @@ function App() {
         console.log("tab is swtiched and this is the new url,", message.url);
         const abstractInfo = await getTabInformation(message.url);
         setAbstract(abstractInfo);
+        // when url changes, delete the state.abstractData
+        // updateState(setState, message.state);
       }
     });
   }, []);
@@ -115,8 +118,8 @@ function App() {
   }
 
   React.useEffect(() => {
-    console.log("new abstract", abstract);
-  }, [abstract]);
+    console.log("new state", state);
+  }, [state]);
 
   React.useEffect(() => {
     const fetchTabData = async () => {
@@ -147,6 +150,18 @@ function App() {
         // element={!state && <Login />}
         element={state && <Layout />}
       >
+        <Route
+          path="test1"
+          element={<Test1 />}
+          loader={async () => {
+            const isLoggedIn = false;
+            if (!isLoggedIn) {
+              return redirect("/login");
+            }
+            return null;
+          }}
+        />
+        <Route path="test2" element={<Test2 />} />
         <Route path="login" errorElement={<Error />} element={<Login />} />
         <Route element={<AuthRequired />}>
           <Route

@@ -41,6 +41,12 @@ export default function Navigation() {
         >
           Main
         </NavLink>
+        <NavLink
+          to="test2"
+          style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
+        >
+          test2
+        </NavLink>
       </nav>
     </>
   );
