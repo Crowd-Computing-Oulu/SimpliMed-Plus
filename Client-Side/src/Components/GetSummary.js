@@ -44,11 +44,13 @@ export default function GetSummary() {
           </button>
         )}
       </div>
-      {state.isLoading ? null : (
-        <p style={{ color: "red" }} className="pt-3">
-          {error.message}
-        </p>
-      )}
+      {state.isLoading
+        ? null
+        : error && (
+            <p style={{ color: "red" }} className="pt-3">
+              {error.message}
+            </p>
+          )}
     </div>
   );
 }
