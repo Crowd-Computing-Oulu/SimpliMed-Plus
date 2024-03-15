@@ -117,6 +117,9 @@ async function requestSummary(req) {
 
   const titlePrompt = "Simplify the following title:";
 
+  const hardWordsPrompt =
+    "Find maximum 10 words from this abstract that might not be known to a reader with elementary school degree:";
+
   const advancedResult = await requestToOpenAI(
     req.body.originalAbstract,
     systemPrompt,
@@ -132,12 +135,17 @@ async function requestSummary(req) {
     systemPrompt,
     titlePrompt
   );
-
+  const hardWordsResult = await requestToOpenAI(
+    req.body.originalAbstract,
+    systemPrompt,
+    hardWordsPrompt
+  );
   // res.status(200).send({ message: "Done" });
   return {
     advancedAbstract: advancedResult.message,
     elementaryAbstract: elementaryResult.message,
     summerizedTitle: titleResult.message,
+    hardWords: hardWordsResult.message,
   };
 }
 exports.requestAbstract = async (req, res) => {
@@ -172,6 +180,7 @@ exports.requestAbstract = async (req, res) => {
       summerizedTitle: results.summerizedTitle,
       advancedAbstract: results.advancedAbstract,
       elementaryAbstract: results.elementaryAbstract,
+      hardWords: results.hardWords,
     });
 
     try {
