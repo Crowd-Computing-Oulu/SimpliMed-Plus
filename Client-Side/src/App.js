@@ -19,7 +19,6 @@ import Instructions from "./Components/Instructions";
 import Abstracts from "./Components/Abstracts";
 import AiAgent from "./Components/AiAgent";
 import GetSummary from "./Components/GetSummary";
-import "bootstrap/dist/css/bootstrap-grid.min.css"; // Only import the grid system to avoid losing icons
 import { getTabInformation, updateState } from "./utils";
 import Navigation from "./Components/Navigation";
 import Error from "./Components/Error";
