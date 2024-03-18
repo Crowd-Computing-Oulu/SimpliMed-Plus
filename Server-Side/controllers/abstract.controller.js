@@ -118,7 +118,7 @@ async function requestSummary(req) {
   const titlePrompt = "Simplify the following title:";
 
   const hardWordsPrompt =
-    "Find maximum 10 words from this abstract that might not be known to a reader with elementary school degree:";
+    "Find maximum 10 words from this abstract that might not be known to a reader with elementary school degree, also add 1-2 line of description for each, the end result should be in json format, which keys are the words in lowercase and values are the definition of the words:";
 
   const advancedResult = await requestToOpenAI(
     req.body.originalAbstract,
