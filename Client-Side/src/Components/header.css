@@ -35,10 +35,8 @@
   font-size: 1.2rem;
 }
 .logoutIcon-container {
-  border-radius: 50%;
   width: 30px;
   height: 30px;
-  background-color: red !important;
 
   /* background-color: var(--secondary-color); */
   display: flex;
@@ -47,22 +45,47 @@
 }
 .logoutIcon-container:hover {
   cursor: pointer;
-  background-color: rgb(72, 72, 72) !important;
-}
-.logoutIcon-container i {
-  color: white;
 }
 
-.header .tooltip,
-header .tooltipUsername {
+.tooltip_1 {
   position: relative;
+  display: inline-block;
+  cursor: default;
 }
-
-.header .tooltip .tooltipText,
-.header .tooltipUsername .tooltipUsernameText {
+.usernameTooltipText,
+.logoutTooltipText {
+  visibility: hidden;
+  opacity: 0;
+  padding: 0.25em 0.5em;
+  background-color: rgb(161, 161, 161);
+  color: rgb(61, 61, 61);
+  text-align: center;
+  border-radius: 0.25em;
+  white-space: nowrap;
+  font-weight: 200;
+  font-size: 1rem;
+  font-family: var(--primary-font);
+  line-height: 70%;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transition-property: visibility;
+  transition-delay: 0s;
+}
+.tooltip_1:hover .usernameTooltipText,
+.tooltip_1:hover .logoutTooltipText {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0.3s;
+}
+/* .tooltipLogoutText,
+.tooltipUsernameText {
   visibility: hidden;
   font-family: sans-serif;
   font-weight: normal;
+  font-size: 0.7rem;
   background-color: #c2c0c0;
   color: #010101;
   text-align: center;
@@ -70,15 +93,14 @@ header .tooltipUsername {
   padding: 5px;
   position: absolute;
   z-index: 1;
-  top: 125%;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
+  top: 1rem;
+  left: 1rem;
+  /* transform: translateX(-50%); */
+/* opacity: 0;
+  transition: opacity 0.3s; */
 
-.tooltip:hover .tooltipText,
+/* .tooltipLogoutText:hover,
 .tooltipUsername:hover .tooltipUsernameText {
   visibility: visible;
-  opacity: 1;
-}
+  opacity: 0.8;
+} */
