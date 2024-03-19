@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Function to fetch definition from Wikipedia
-export const fetchDefinition = async (word) => {
+export const fetchWikipediaDefinition = async (word) => {
   try {
     // Use wikipedia api to fetch definition
     const response = await axios.get(
