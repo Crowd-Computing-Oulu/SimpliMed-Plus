@@ -134,7 +134,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           // this funciton will send a message and the state to the login request
           console.log("Access Token saved in the storage successfully!");
           sendResponse({
-            response: "Login Successfull",
+            response: "Login Successful",
             state: state,
           });
         })
