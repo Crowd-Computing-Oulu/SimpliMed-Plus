@@ -3,45 +3,37 @@
 import React from "react";
 import {
   createMemoryRouter,
-  BrowserRouter,
   RouterProvider,
-  MemoryRouter,
-  Routes,
   redirect,
   Route,
+  Navigate,
   createRoutesFromElements,
 } from "react-router-dom";
 import "./App.css";
-import Header from "./Components/Header";
-import Loading from "./Components/Loading";
-import Login from "./Components/Login";
-import Instructions from "./Components/Instructions";
-import Abstracts from "./Components/Abstracts";
+
+import Login, { action as loginAction } from "./Components/Login";
 import AiAgent from "./Components/AiAgent";
-import GetSummary from "./Components/GetSummary";
 import { getTabInformation, updateState } from "./utils";
-import Navigation from "./Components/Navigation";
 import Error from "./Components/Error";
-import Test1 from "./Components/Test1";
+import Test3 from "./Components/Test3";
 import Test2 from "./Components/Test2";
 import Layout from "./Components/Layout";
 import Main from "./Components/Main";
 import AuthRequired from "./Components/AuthRequired";
 
-import { Memory } from "react-bootstrap-icons";
 // var port = chrome.runtime.connect({ name: "popupConnection" });
 export const AppContext = React.createContext();
 function App() {
-  const [username, setUsername] = React.useState(null);
   const [state, setState] = React.useState(null);
   const [abstract, setAbstract] = React.useState(null);
-
   // Send a message each time the sidepanel opens
   React.useEffect(() => {
     chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
       console.log("state upon open is", response.state);
       if (response.response === "TokenExist") {
         updateState(setState, response.state);
+      } else {
+        console.log("token does not exist");
       }
     });
   }, []);
@@ -79,36 +71,10 @@ function App() {
         console.log("state will be update for the ");
         console.log(message.state);
         updateState(setState, message.state);
-        // setState((prevState) => ({
-        //   ...prevState,
-        //   ...message.state,
-        // }));
       }
     });
   }, []);
 
-  // This function will only run if username changes(if we enter a username)
-  React.useEffect(() => {
-    async function sendMessage() {
-      if (username !== null) {
-        chrome.runtime.sendMessage(
-          { action: "loginRequest", username },
-          async function (response) {
-            // This will update the state after the login was successfull
-            // response state contains the token and the username here
-            updateState(setState, response.state);
-          }
-        );
-      }
-    }
-
-    sendMessage(); // Call the async function to send the message
-  }, [username]);
-
-  // callback function to receive the username from Login component
-  function handleLoginChange(submittedUsername) {
-    setUsername(submittedUsername);
-  }
   function handleLogoutChange() {
     console.log("user has logged out");
     // Deleting the state upon logout
@@ -143,13 +109,25 @@ function App() {
 
   const router = createMemoryRouter(
     createRoutesFromElements(
-      <Route
-        path="/"
-        errorElement={<Error />}
-        // element={!state && <Login />}
-        element={state && <Layout />}
-      >
+      <>
         <Route
+          path="/"
+          errorElement={<Error />}
+          // element={state && <Login />}
+          // action={(obj) => loginAction(obj, setState)}
+          element={state && <Layout />}
+          // element={<Test1 />}
+          loader={() => {
+            // const baghali = false;
+            if (!state) {
+              console.log("we dont have state yet");
+              // <Navigate to="test3" />;
+              return redirect("/login");
+            }
+            return null;
+          }}
+        >
+          {/* <Route
           path="test1"
           element={<Test1 />}
           loader={async () => {
@@ -159,19 +137,36 @@ function App() {
             }
             return null;
           }}
-        />
-        <Route path="test2" element={<Test2 />} />
-        <Route path="login" errorElement={<Error />} element={<Login />} />
-        <Route element={<AuthRequired />}>
-          <Route
-            path="aiagent"
+        /> */}
+          {/* <Route path="test2" element={<Test2 />} /> */}
+          {/* <Route
+            path="login"
             errorElement={<Error />}
-            element={<AiAgent />}
-          />
-          <Route path="main" errorElement={<Error />} element={<Main />} />
+            element={<Login />}
+            action={(obj) => loginAction(obj, setState)}
+          /> */}
+          <Route element={<AuthRequired />}>
+            <Route
+              path="aiagent"
+              errorElement={<Error />}
+              element={<AiAgent />}
+            />
+            <Route path="main" errorElement={<Error />} element={<Main />} />
+          </Route>
+          <Route path="test3" element={<Test3 />} />
         </Route>
-      </Route>
-    )
+        <Route
+          path="/login"
+          errorElement={<Error />}
+          element={<Login />}
+          action={(obj) => loginAction(obj, setState)}
+        />
+      </>
+    ),
+    {
+      initialEntries: ["/"],
+      initialIndex: 0,
+    }
   );
   return (
     <div className="App">
@@ -179,12 +174,14 @@ function App() {
         value={{
           state,
           setState,
-          handleLoginChange,
           handleLogoutChange,
           abstract,
         }}
       >
-        <RouterProvider router={router} />
+        <RouterProvider
+          router={router}
+          fallbackElement={<p>Nothing here!</p>}
+        />
       </AppContext.Provider>
     </div>
   );
