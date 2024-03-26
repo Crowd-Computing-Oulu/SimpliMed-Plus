@@ -10,7 +10,7 @@ export default function Layout() {
     <>
       <Header />
       <Navigation />
-      {location.pathname === "/" && <Instructions />}
+      {/* {location.pathname === "/" && <Instructions />} */}
       <Outlet />
     </>
   );

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { fetchDefinition } from "../apis";
+import { fetchWikipediaDefinition } from "../apis";
 export default function Test2() {
   const [hardWordsObj, setHardWordsObj] = React.useState({});
 
@@ -29,7 +29,7 @@ export default function Test2() {
       const newWordObjects = {};
       const promises = hardWords.map(async (word) => {
         try {
-          const response = await fetchDefinition(word);
+          const response = await fetchWikipediaDefinition(word);
           newWordObjects[word] = response;
         } catch (error) {
           console.error("Error fetching definition for", word, ":", error);

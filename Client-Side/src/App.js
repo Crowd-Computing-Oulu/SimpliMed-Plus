@@ -24,6 +24,7 @@ import AuthRequired from "./Components/AuthRequired";
 // var port = chrome.runtime.connect({ name: "popupConnection" });
 export const AppContext = React.createContext();
 function App() {
+  const [wrongPage, setWrongPage] = React.useState(false);
   const [state, setState] = React.useState(null);
   const [abstract, setAbstract] = React.useState(null);
   // Send a message each time the sidepanel opens
@@ -68,7 +69,7 @@ function App() {
       sendResponse
     ) {
       if (message.action === "updateState") {
-        console.log("state will be update for the ");
+        console.log("state will be update in the useeffect ");
         console.log(message.state);
         updateState(setState, message.state);
       }
@@ -96,9 +97,11 @@ function App() {
         const currentTab = tabs[0];
         // send url to the function and get url, originaltitle and originalabstract
         const abstractInfo = await getTabInformation(currentTab.url);
+        setWrongPage(false);
         setAbstract(abstractInfo);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching the abstract data from the page:", error);
+        setWrongPage(true);
       }
     };
     fetchTabData();
@@ -115,7 +118,7 @@ function App() {
           errorElement={<Error />}
           // element={state && <Login />}
           // action={(obj) => loginAction(obj, setState)}
-          element={state && <Layout />}
+          element={<Layout />}
           // element={<Test1 />}
           loader={() => {
             // const baghali = false;
@@ -145,14 +148,29 @@ function App() {
             element={<Login />}
             action={(obj) => loginAction(obj, setState)}
           /> */}
-          <Route element={<AuthRequired />}>
-            <Route
-              path="aiagent"
-              errorElement={<Error />}
-              element={<AiAgent />}
-            />
-            <Route path="main" errorElement={<Error />} element={<Main />} />
-          </Route>
+          {/* <Route element={<AuthRequired />}> */}
+          <Route
+            path="aiagent"
+            errorElement={<Error />}
+            element={<AiAgent />}
+          />
+          <Route
+            path="main"
+            errorElement={<Error />}
+            element={<Main />}
+            loader={() => {
+              const baghli = false;
+              if (baghli) {
+                return null;
+              }
+              return null;
+              // if (state && abstract) {
+              //   return null;
+              // }
+              // return null;
+            }}
+          />
+          {/* </Route> */}
           <Route path="test3" element={<Test3 />} />
         </Route>
         <Route
@@ -176,6 +194,7 @@ function App() {
           setState,
           handleLogoutChange,
           abstract,
+          wrongPage,
         }}
       >
         <RouterProvider
