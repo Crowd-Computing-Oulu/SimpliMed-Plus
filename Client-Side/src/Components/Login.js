@@ -1,14 +1,7 @@
 /*global chrome*/
 import React from "react";
 import "./login.css";
-import { AppContext } from "../App";
-import {
-  redirect,
-  useLoaderData,
-  useActionData,
-  Form,
-  useNavigate,
-} from "react-router-dom";
+import { redirect, useActionData, Form, useNavigate } from "react-router-dom";
 import { updateState } from "../utils";
 
 // export function loader({ request }) {
@@ -20,7 +13,6 @@ export async function action({ request }, setState) {
 
   const formData = await request.formData();
   const username = formData.get("username");
-  // console.log("tets is", test);
   chrome.runtime.sendMessage(
     { action: "loginRequest", username },
     (response) => {
@@ -28,24 +20,10 @@ export async function action({ request }, setState) {
       if (response.response === "Login Successful") {
         console.log("token exist");
         updateState(setState, response.state);
-        return redirect("/");
+        return redirect("/layout");
       }
     }
   );
-
-  // const password = formData.get("password");
-  // const prevPathname =
-  //   new URL(request.url).searchParams.get("redirectTo") || "/host";
-  // try {
-  //   // const data = await loginUser({ email, password });
-  //   localStorage.setItem("isLoggedIn", true);
-  //   setIsLoggedIn(true);
-  //   return Object.defineProperty(redirect(prevPathname), "body", {
-  //     value: true,
-  //   });
-  // } catch (err) {
-  //   return err.message;
-  // }
   return null;
 }
 
@@ -53,15 +31,7 @@ export default function Login() {
   const errorMessage = useActionData();
   console.log("error message is", errorMessage);
   const navigation = useNavigate();
-  // This message is for redirection to login page when need authentication
-  // const message = useLoaderData();
-  // const [username, setUsername] = React.useState("");
-  const { handleLoginChange } = React.useContext(AppContext);
-  function handleSubmit(e) {
-    e.preventDefault();
-    // handleLoginChange(username);
-    // redirect("/main");
-  }
+
   const btnSubmitting = {
     backgroundColor: "grey",
   };
@@ -77,9 +47,7 @@ export default function Login() {
         <input
           type="username"
           id="username"
-          // value={username}
           name="username"
-          // onChange={(e) => setUsername(e.target.value)}
           placeholder="Your Prolific Username"
           required
         />
