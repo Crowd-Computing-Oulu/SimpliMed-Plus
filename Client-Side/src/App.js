@@ -49,13 +49,24 @@ function App() {
     ) {
       if (message.action === "Tab Switched") {
         console.log("tab is swtiched and this is the new url,", message.url);
-        const abstractInfo = await getTabInformation(message.url);
-        setAbstract(abstractInfo);
+        try {
+          const abstractInfo = await getTabInformation(message.url);
+          setAbstract(abstractInfo);
+          setWrongPage(false);
+        } catch (error) {
+          setWrongPage(true);
+        }
       }
       if (message.action === "URL Changed") {
         console.log("tab is swtiched and this is the new url,", message.url);
-        const abstractInfo = await getTabInformation(message.url);
-        setAbstract(abstractInfo);
+        try {
+          const abstractInfo = await getTabInformation(message.url);
+          setAbstract(abstractInfo);
+          setWrongPage(false);
+        } catch (error) {
+          setWrongPage(true);
+        }
+
         // when url changes, delete the state.abstractData
         // updateState(setState, message.state);
       }
@@ -114,21 +125,21 @@ function App() {
     createRoutesFromElements(
       <>
         <Route
-          path="/"
+          path="/layout"
           errorElement={<Error />}
           // element={state && <Login />}
           // action={(obj) => loginAction(obj, setState)}
           element={<Layout />}
           // element={<Test1 />}
-          loader={() => {
-            // const baghali = false;
-            if (!state) {
-              console.log("we dont have state yet");
-              // <Navigate to="test3" />;
-              return redirect("/login");
-            }
-            return null;
-          }}
+          // loader={() => {
+          //   // const baghali = false;
+          //   if (!state) {
+          //     console.log("we dont have state yet");
+          //     // <Navigate to="test3" />;
+          //     return redirect("/login");
+          //   }
+          //   return null;
+          // }}
         >
           {/* <Route
           path="test1"
@@ -158,19 +169,13 @@ function App() {
             path="main"
             errorElement={<Error />}
             element={<Main />}
-            loader={() => {
-              const baghli = false;
-              if (baghli) {
-                return null;
-              }
-              return null;
-              // if (state && abstract) {
-              //   return null;
-              // }
-              // return null;
-            }}
+            // loader={() => {
+            //   if (state && abstract) {
+            //     return null;
+            //     return null;
+            //   }
+            // }}
           />
-          {/* </Route> */}
           <Route path="test3" element={<Test3 />} />
         </Route>
         <Route
@@ -182,7 +187,7 @@ function App() {
       </>
     ),
     {
-      initialEntries: ["/"],
+      initialEntries: ["/layout"],
       initialIndex: 0,
     }
   );
