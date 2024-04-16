@@ -63,14 +63,74 @@ async function requestToOpenAI(text, systemPrompt, userPrompt) {
     return result;
   }
 }
+async function requestToWikipedia(hardWordsJson) {
+  // hardWords object is an object with words as keys and definitions as values in json format (definitions are initially from gpt-4)
+  let hardWordsObject = JSON.parse(hardWordsJson);
+  let hardWordsArray = [];
+  let id = 0;
+  for (const word in hardWordsObject) {
+    hardWordsArray.push({
+      id: id,
+      word: word,
+      definition: hardWordsObject[word],
+      wikipedia: false,
+    });
+    id++;
+  }
+  console.log("this is hard words object", hardWordsObject);
+  console.log("this is hard words array", hardWordsArray);
+  let mergedDefinition = [];
+  const promises = hardWordsArray.map(async (obj) => {
+    const word = obj.word;
+    try {
+      // Use wikipedia api to fetch definition
+      const response = await axios.get(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${word}`
+      );
+      const { extract } = response.data;
+      // remove the uncertain definitions
+      if (extract.includes("may refer to:")) {
+        mergedDefinition.push({
+          id: obj.id,
+          word: word,
+          definition: obj.definition,
+          wikipedia: false,
+        });
+        // mergedDefinition[word] = hardWordsObject[word];
+      } else {
+        mergedDefinition.push({
+          id: obj.id,
+          word: word,
+          definition: extract,
+          wikipedia: true,
+        });
+        // mergedDefinition[word] = extract;
+      }
+    } catch (error) {
+      // if there is no wikipedia definition, then keep the gpt-4 definition
+      mergedDefinition.push({
+        id: obj.id,
+        word: word,
+        definition: obj.definition,
+        wikipedia: false,
+      });
+      // throw error;
+    }
+  });
+  await Promise.all(promises);
+  // Sorting the array based on the id
+  mergedDefinition.sort((a, b) => a.id - b.id);
+  console.log(
+    "this is merged definitionnnnnnnnnnnnnnnnnnnnnnnnnnnnn after sooooooooooooooooooooooort",
+    mergedDefinition
+  );
+  return mergedDefinition;
+}
 
 //
 
 exports.submitFeedback = async (req, res) => {
-  console.log(
-    "this is request body -==--==============================================================================================",
-    req.body
-  );
+  console.log("this is request body in submit feedback", req.body);
 
   const feedback = new Feedback({
     userID: req.user.id,
@@ -140,12 +200,16 @@ async function requestSummary(req) {
     systemPrompt,
     hardWordsPrompt
   );
+  // This merge the definitions from wikipedia and gpt-4
+  const hardWordsWikipediaGPT = await requestToWikipedia(
+    hardWordsResult.message
+  );
   // res.status(200).send({ message: "Done" });
   return {
     advancedAbstract: advancedResult.message,
     elementaryAbstract: elementaryResult.message,
     summerizedTitle: titleResult.message,
-    hardWords: hardWordsResult.message,
+    hardWords: hardWordsWikipediaGPT,
   };
 }
 exports.requestAbstract = async (req, res) => {
