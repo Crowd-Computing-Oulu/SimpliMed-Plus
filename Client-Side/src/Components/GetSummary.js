@@ -99,7 +99,7 @@ export default function GetSummary() {
   return (
     <>
       <div className="getSummary-container flex-grow-0">
-        <div className="d-flex align-items-center justify-content-center pt-3">
+        <div className="d-flex flex-column align-items-center justify-content-center pt-3 ">
           {state &&
             summaryButton(
               state.isLoading,
