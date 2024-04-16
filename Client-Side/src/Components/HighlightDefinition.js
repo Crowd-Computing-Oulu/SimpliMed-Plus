@@ -1,27 +1,29 @@
 import React, { useEffect } from "react";
-import { fetchWikipediaDefinition } from "../apis";
-import { WindowDash } from "react-bootstrap-icons";
 import "./highlightDefinition.css";
-export default function HighlightDefinition({ hardWords, text }) {
+
+export default function HighlightDefinition({
+  hardWordsDefinitionArray,
+  text,
+}) {
   const [modifiedOriginalText, setModifiedOriginalText] = React.useState(null);
   const tooltipRefs = React.useRef({}); // to hold tooltip position states
-  // const [tooltipStyle, setTooltipStyle] = React.useState({
-  //   display: "none",
-  // });
 
-  //  This function highglight the hards words and show the definition on hover
   useEffect(() => {
     setModifiedOriginalText(showDefinition(text));
   }, [text]);
+
+  // }, [finalDefinition, text]);
+  //  This function highglight the hards words and show the definition on hover
   function showDefinition(text) {
     let result = [];
     let remainingText = text;
+    // hardWordsDefinitionArray is an array of objects with id, word, definition and boolean wikipedia
 
-    Object.keys(hardWords).forEach((word) => {
+    hardWordsDefinitionArray.forEach((obj) => {
+      const word = obj.word;
       const lowerCaseWord = word.toLowerCase().trim();
-      const definition = hardWords[lowerCaseWord];
+      const definition = obj.definition;
       const startIndex = remainingText.toLowerCase().indexOf(lowerCaseWord);
-
       if (startIndex !== -1) {
         // All the words before the hard word
         const before = remainingText.substring(0, startIndex);
@@ -32,12 +34,10 @@ export default function HighlightDefinition({ hardWords, text }) {
         // push the text before the hard word to the result array
         result.push(<span key={result.length}>{before}</span>);
         // push the hard word to the result array
-
         result.push(
           <span
             key={result.length}
             className="highlitedWord"
-            style={{}}
             onMouseEnter={(event) => handleMouseEnter(lowerCaseWord, event)}
             onMouseLeave={() => handleMouseLeave(lowerCaseWord)}
           >
@@ -49,10 +49,11 @@ export default function HighlightDefinition({ hardWords, text }) {
               <p
                 key={result.length}
                 ref={(ref) => (tooltipRefs.current[lowerCaseWord] = ref)}
-                className="tooltip-definition hidden"
-                // style={tooltipStyle}
+                className="tooltip-definition tooltip-hidden"
               >
-                <span className="inline-block fw-bold">Wikipedia: </span>
+                <span className="inline-block fw-bold">
+                  {obj.wikipedia ? "Wikipedia:" : "GPT:"}{" "}
+                </span>
                 {definition}
               </p>
             </span>
@@ -76,7 +77,6 @@ export default function HighlightDefinition({ hardWords, text }) {
     tooltipHeight,
     word
   ) {
-    // if (!tooltipRefs) return; // Ensure buttonRect is available
     let tooltipLeft = 0 + 20;
     let tooltipTop = 20;
     if (clientX + tooltipWidth > window.innerWidth) {
@@ -87,16 +87,7 @@ export default function HighlightDefinition({ hardWords, text }) {
       let newTooltipY = window.innerHeight - tooltipHeight; // Adjusted top position
       tooltipTop = newTooltipY - clientY;
     }
-    console.log("tooltip style should be set");
-    // setTooltipStyle({
-    //   display: "block",
-    //   backgroundColor: "gray",
-    //   left: `${tooltipLeft}px`,
-    //   top: `${tooltipTop}px`,
-    //   width: `${popupWidth}px`,
-    //   height: `${popupHeight}px`,
-    //   position: "absolute",
-    // });
+
     const tooltip = tooltipRefs.current[word];
     tooltip.className = "tooltip-definition";
     tooltip.style.left = `${tooltipLeft}px`;
@@ -106,8 +97,17 @@ export default function HighlightDefinition({ hardWords, text }) {
   // Event handler for entering a highlighted word
   const handleMouseEnter = (word, event) => {
     const tooltip = tooltipRefs.current[word];
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    // the width of the tooltip is fixed at 350px
     if (tooltip) {
-      calculateTooltipPosition(event.clientX, event.clientY, 300, 100, word);
+      calculateTooltipPosition(
+        event.clientX,
+        event.clientY,
+        350,
+        tooltipRect.height,
+        word
+      );
     }
   };
   // Event handler for leaving a highlighted word
@@ -117,7 +117,8 @@ export default function HighlightDefinition({ hardWords, text }) {
       //reseting the position of the tooltip
       tooltip.style.left = `0px`;
       tooltip.style.top = `0px`;
-      tooltip.className = "hidden";
+      tooltip.style.width = "350px";
+      tooltip.className = "tooltip-hidden ";
     }
   };
 
