@@ -337,7 +337,7 @@ exports.requestKeywords = async (req, res) => {
 };
 async function requestKeywords(req) {
   const suggestKeywordsPrompt =
-    "Sugguest 5 keywords to search for articles in pubmed database based on this question:";
+    "Generate 3 keywords relevant to the question. Focus on terms that elucidate the relationship between the words and their topic, including related factors, mechanisms, and relevant research areas. These keywords should facilitate searching for pertinent articles on PubMed.";
   const systemPrompt =
     "You suggest keywords in medical domain to help people search articles in pubmed database";
 
