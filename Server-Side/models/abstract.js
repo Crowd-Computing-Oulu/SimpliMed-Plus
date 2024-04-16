@@ -42,7 +42,7 @@ const abstractSchema = new Schema(
       required: true,
     },
     hardWords: {
-      type: String,
+      type: Array,
       required: true,
     },
     created: {
