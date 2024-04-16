@@ -5,8 +5,8 @@ import HighlightDefinition from "./HighlightDefinition";
 export default function Abstracts() {
   const { state } = React.useContext(AppContext);
   const abstracts = state.abstractData;
-  // converting the hard words and their definition to an object with hard words as keys and their definitions as values
-  const hardWords = JSON.parse(abstracts.hardWords);
+  // this is the hardwords and their definition array of objects from Wikipedia or gpt
+  const hardWordsDefinitionArray = abstracts.hardWords;
   const [version, setVersion] = React.useState(0);
   // split the paragphras instead of a block of text
   function split(abstract) {
@@ -112,7 +112,7 @@ export default function Abstracts() {
 
           abstracts && (
             <HighlightDefinition
-              hardWords={hardWords}
+              hardWordsDefinitionArray={hardWordsDefinitionArray}
               text={abstracts.originalAbstract}
             />
           )}
