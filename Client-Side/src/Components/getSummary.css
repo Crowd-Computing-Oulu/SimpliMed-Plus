@@ -1,0 +1,18 @@
+.getSummaryBtn {
+  background-color: var(--secondary-color);
+  width: 80%;
+  box-shadow: 0px 3px 5px 0px gray;
+}
+.disabledBtn,
+.loadingBtn {
+  background-color: rgb(128, 128, 128) !important;
+  box-shadow: none;
+}
+.loadingBtn:hover {
+  cursor: wait !important;
+  background-color: rgb(128, 128, 128) !important;
+}
+.disabledBtn:hover {
+  cursor: not-allowed !important;
+  background-color: rgb(128, 128, 128) !important;
+}

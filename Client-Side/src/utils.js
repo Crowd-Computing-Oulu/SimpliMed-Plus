@@ -23,8 +23,14 @@ export async function getTabInformation(url) {
 }
 //  TO UPDATE THE STATE BASED ON A NEW STATE
 export function updateState(setState, newState) {
-  setState((prevState) => ({
-    ...prevState,
-    ...newState,
-  }));
+  setState((prevState) => {
+    if (JSON.stringify(prevState) === JSON.stringify(newState)) {
+      // if newState and prevState are the same, it should not cause a rerender
+      return prevState;
+    }
+    return {
+      ...prevState,
+      ...newState,
+    };
+  });
 }

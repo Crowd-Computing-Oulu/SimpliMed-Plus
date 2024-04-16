@@ -27,7 +27,7 @@ async function requestToOpenAI(text, systemPrompt, userPrompt) {
   };
 
   try {
-    const response = await axios.post(
+    const responsePromise = axios.post(
       "https://api.openai.com/v1/chat/completions",
       payload,
       {
@@ -37,9 +37,24 @@ async function requestToOpenAI(text, systemPrompt, userPrompt) {
         },
       }
     );
+
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error("Timeout: Request took too long to complete"));
+      }, 120000); //Time in milliseconds
+    });
+
+    const response = await Promise.race([responsePromise, timeoutPromise]);
+
+    if (response instanceof Error) {
+      // If response is an Error object (i.e., timeout error)
+      throw response;
+    }
+
     if (response.status !== 200) {
       throw new Error(`Error code: ${response.status}. ${response.data}`);
     }
+
     const message = response.data.choices[0].message.content;
     let result = { message: message, status: "Ok" };
     return result;
@@ -48,13 +63,74 @@ async function requestToOpenAI(text, systemPrompt, userPrompt) {
     return result;
   }
 }
+async function requestToWikipedia(hardWordsJson) {
+  // hardWords object is an object with words as keys and definitions as values in json format (definitions are initially from gpt-4)
+  let hardWordsObject = JSON.parse(hardWordsJson);
+  let hardWordsArray = [];
+  let id = 0;
+  for (const word in hardWordsObject) {
+    hardWordsArray.push({
+      id: id,
+      word: word,
+      definition: hardWordsObject[word],
+      wikipedia: false,
+    });
+    id++;
+  }
+  console.log("this is hard words object", hardWordsObject);
+  console.log("this is hard words array", hardWordsArray);
+  let mergedDefinition = [];
+  const promises = hardWordsArray.map(async (obj) => {
+    const word = obj.word;
+    try {
+      // Use wikipedia api to fetch definition
+      const response = await axios.get(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${word}`
+      );
+      const { extract } = response.data;
+      // remove the uncertain definitions
+      if (extract.includes("may refer to:")) {
+        mergedDefinition.push({
+          id: obj.id,
+          word: word,
+          definition: obj.definition,
+          wikipedia: false,
+        });
+        // mergedDefinition[word] = hardWordsObject[word];
+      } else {
+        mergedDefinition.push({
+          id: obj.id,
+          word: word,
+          definition: extract,
+          wikipedia: true,
+        });
+        // mergedDefinition[word] = extract;
+      }
+    } catch (error) {
+      // if there is no wikipedia definition, then keep the gpt-4 definition
+      mergedDefinition.push({
+        id: obj.id,
+        word: word,
+        definition: obj.definition,
+        wikipedia: false,
+      });
+      // throw error;
+    }
+  });
+  await Promise.all(promises);
+  // Sorting the array based on the id
+  mergedDefinition.sort((a, b) => a.id - b.id);
+  console.log(
+    "this is merged definitionnnnnnnnnnnnnnnnnnnnnnnnnnnnn after sooooooooooooooooooooooort",
+    mergedDefinition
+  );
+  return mergedDefinition;
+}
+
 //
 
 exports.submitFeedback = async (req, res) => {
-  console.log(
-    "this is request body -==--==============================================================================================",
-    req.body
-  );
+  console.log("this is request body in submit feedback", req.body);
 
   const feedback = new Feedback({
     userID: req.user.id,
@@ -87,7 +163,7 @@ exports.submitFeedback = async (req, res) => {
 };
 
 ////
-async function requestResults(req) {
+async function requestSummary(req) {
   console.log("the request in server is:", req.body);
 
   const systemPrompt =
@@ -100,6 +176,9 @@ async function requestResults(req) {
     "Simplify the following abstract of a medical article while retaining the main idea. The target audience is individuals with an elementary school education degree. Use easy-to-understand language and avoid technical jargon and complex terms. You are allowed to summerize the text, but try not to summerize it too much. Ensure that the main idea of the original text is preserved without adding any additional information.  this is the abstract";
 
   const titlePrompt = "Simplify the following title:";
+
+  const hardWordsPrompt =
+    "Find maximum 10 words from this abstract that might not be known to a reader with elementary school degree, also add 1-2 line of description for each, the end result should be in json format, which keys are the words in lowercase and values are the definition of the words:";
 
   const advancedResult = await requestToOpenAI(
     req.body.originalAbstract,
@@ -116,12 +195,21 @@ async function requestResults(req) {
     systemPrompt,
     titlePrompt
   );
-
+  const hardWordsResult = await requestToOpenAI(
+    req.body.originalAbstract,
+    systemPrompt,
+    hardWordsPrompt
+  );
+  // This merge the definitions from wikipedia and gpt-4
+  const hardWordsWikipediaGPT = await requestToWikipedia(
+    hardWordsResult.message
+  );
   // res.status(200).send({ message: "Done" });
   return {
     advancedAbstract: advancedResult.message,
     elementaryAbstract: elementaryResult.message,
     summerizedTitle: titleResult.message,
+    hardWords: hardWordsWikipediaGPT,
   };
 }
 exports.requestAbstract = async (req, res) => {
@@ -146,7 +234,7 @@ exports.requestAbstract = async (req, res) => {
   if (abstract == null) {
     console.log("Creating a new Abstract Record.");
     // add api call
-    const results = await requestResults(req);
+    const results = await requestSummary(req);
     console.log("this is final results", results);
     //
     abstract = new Abstract({
@@ -156,6 +244,7 @@ exports.requestAbstract = async (req, res) => {
       summerizedTitle: results.summerizedTitle,
       advancedAbstract: results.advancedAbstract,
       elementaryAbstract: results.elementaryAbstract,
+      hardWords: results.hardWords,
     });
 
     try {

@@ -1,42 +1,40 @@
 /*global chrome*/
 
-import React, { createContext } from "react";
+import React from "react";
 import {
-  Route,
-  RouterProvider,
-  createRoutesFromElements,
   createMemoryRouter,
+  RouterProvider,
+  redirect,
+  Route,
+  Navigate,
+  createRoutesFromElements,
 } from "react-router-dom";
 import "./App.css";
 
-import Login from "./Components/Login";
+import Login, { action as loginAction } from "./Components/Login";
 import AiAgent from "./Components/AiAgent";
-import Main from "./Components/Main";
-
-// import Navigation from "./Components/Navigation";
-import Layout from "./Components/Layout";
-import "bootstrap/dist/css/bootstrap-grid.min.css"; // Only import the grid system to avoid losing icons
 import { getTabInformation, updateState } from "./utils";
-import Error from "./pages/Error";
-// var port = chrome.runtime.connect({ name: "popupConnection" });
-export const AppContext = createContext();
+import Error from "./Components/Error";
+import Test3 from "./Components/Test3";
+import Test2 from "./Components/Test2";
+import Layout from "./Components/Layout";
+import Main from "./Components/Main";
+import AuthRequired from "./Components/AuthRequired";
 
+// var port = chrome.runtime.connect({ name: "popupConnection" });
+export const AppContext = React.createContext();
 function App() {
-  const [submittedUsername, setSubmittedUsername] = React.useState(null);
+  const [wrongPage, setWrongPage] = React.useState(false);
   const [state, setState] = React.useState(null);
   const [abstract, setAbstract] = React.useState(null);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-
   // Send a message each time the sidepanel opens
   React.useEffect(() => {
     chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
       console.log("state upon open is", response.state);
       if (response.response === "TokenExist") {
         updateState(setState, response.state);
-        setIsLoggedIn(true);
       } else {
-        console.log("Token does not exist");
-        setIsLoggedIn(false);
+        console.log("token does not exist");
       }
     });
   }, []);
@@ -51,13 +49,26 @@ function App() {
     ) {
       if (message.action === "Tab Switched") {
         console.log("tab is swtiched and this is the new url,", message.url);
-        const abstractInfo = await getTabInformation(message.url);
-        setAbstract(abstractInfo);
+        try {
+          const abstractInfo = await getTabInformation(message.url);
+          setAbstract(abstractInfo);
+          setWrongPage(false);
+        } catch (error) {
+          setWrongPage(true);
+        }
       }
       if (message.action === "URL Changed") {
         console.log("tab is swtiched and this is the new url,", message.url);
-        const abstractInfo = await getTabInformation(message.url);
-        setAbstract(abstractInfo);
+        try {
+          const abstractInfo = await getTabInformation(message.url);
+          setAbstract(abstractInfo);
+          setWrongPage(false);
+        } catch (error) {
+          setWrongPage(true);
+        }
+
+        // when url changes, delete the state.abstractData
+        // updateState(setState, message.state);
       }
     });
   }, []);
@@ -69,41 +80,23 @@ function App() {
       sendResponse
     ) {
       if (message.action === "updateState") {
-        console.log("state will be update for the ");
+        console.log("state will be update in the useeffect ");
         console.log(message.state);
         updateState(setState, message.state);
       }
     });
   }, []);
 
-  // This function will only run if username changes(if we enter a username)
-  React.useEffect(() => {
-    async function sendMessage() {
-      if (submittedUsername !== null) {
-        chrome.runtime.sendMessage(
-          { action: "loginRequest", submittedUsername },
-          async function (response) {
-            // This will update the state after the login was successfull
-            // response state contains the token and the username here
-            updateState(setState, response.state);
-          }
-        );
-      }
-    }
-
-    sendMessage(); // Call the async function to send the message
-  }, [submittedUsername]);
-
-  // callback function to receive the username from Login component
-  function handleLoginChange(submittedUsername) {
-    setSubmittedUsername(submittedUsername);
-  }
   function handleLogoutChange() {
     console.log("user has logged out");
     // Deleting the state upon logout
     setState(null);
     chrome.runtime.sendMessage({ action: "logoutRequest" });
   }
+
+  React.useEffect(() => {
+    console.log("new state", state);
+  }, [state]);
 
   React.useEffect(() => {
     const fetchTabData = async () => {
@@ -115,59 +108,104 @@ function App() {
         const currentTab = tabs[0];
         // send url to the function and get url, originaltitle and originalabstract
         const abstractInfo = await getTabInformation(currentTab.url);
+        setWrongPage(false);
         setAbstract(abstractInfo);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching the abstract data from the page:", error);
+        setWrongPage(true);
       }
     };
     fetchTabData();
   }, []);
 
+  // React Router Dom
+
   const router = createMemoryRouter(
     createRoutesFromElements(
-      <Route path="/" errorElement={<Error />} element={state && <Layout />}>
+      <>
+        <Route
+          path="/layout"
+          errorElement={<Error />}
+          // element={state && <Login />}
+          // action={(obj) => loginAction(obj, setState)}
+          element={<Layout />}
+          // element={<Test1 />}
+          // loader={() => {
+          //   // const baghali = false;
+          //   if (!state) {
+          //     console.log("we dont have state yet");
+          //     // <Navigate to="test3" />;
+          //     return redirect("/login");
+          //   }
+          //   return null;
+          // }}
+        >
+          {/* <Route
+          path="test1"
+          element={<Test1 />}
+          loader={async () => {
+            const isLoggedIn = false;
+            if (!isLoggedIn) {
+              return redirect("/login");
+            }
+            return null;
+          }}
+        /> */}
+          {/* <Route path="test2" element={<Test2 />} /> */}
+          {/* <Route
+            path="login"
+            errorElement={<Error />}
+            element={<Login />}
+            action={(obj) => loginAction(obj, setState)}
+          /> */}
+          {/* <Route element={<AuthRequired />}> */}
+          <Route
+            path="aiagent"
+            errorElement={<Error />}
+            element={<AiAgent />}
+          />
+          <Route
+            path="main"
+            errorElement={<Error />}
+            element={<Main />}
+            // loader={() => {
+            //   if (state && abstract) {
+            //     return null;
+            //     return null;
+            //   }
+            // }}
+          />
+          <Route path="test3" element={<Test3 />} />
+        </Route>
         <Route
           path="/login"
           errorElement={<Error />}
-          element={!isLoggedIn ? <Login /> : null}
+          element={<Login />}
+          action={(obj) => loginAction(obj, setState)}
         />
-        <Route path="/aiagent" errorElement={<Error />} element={<AiAgent />} />
-        <Route path="/main" errorElement={<Error />} element={<Main />} />
-      </Route>
-    )
+      </>
+    ),
+    {
+      initialEntries: ["/layout"],
+      initialIndex: 0,
+    }
   );
-
   return (
     <div className="App">
       <AppContext.Provider
         value={{
           state,
           setState,
-          handleLoginChange,
           handleLogoutChange,
           abstract,
+          wrongPage,
         }}
       >
-        <RouterProvider router={router} />
+        <RouterProvider
+          router={router}
+          fallbackElement={<p>Nothing here!</p>}
+        />
       </AppContext.Provider>
-      {/* {
-        state && state.accessToken ? (
-          <>
-            <Header state={state} handleLogout={handleLogoutChange} />
-            {abstract && state && !state.isLoading && (
-              <GetSummary setState={setState} tabAbstract={abstract} />
-            )}
-          </>
-        ) : null
-        <Login handleLogin={handleLoginChange} />
-      }
-
-      {state && !state.isLoading && !state.abstractData && <Instructions />}
-      {state && !state.isLoading && state.abstractData && (
-        <Abstracts abstracts={state.abstractData} />
-      )}
-
-      {state && state.isLoading ? <Loading /> : ""} */}
     </div>
   );
 }

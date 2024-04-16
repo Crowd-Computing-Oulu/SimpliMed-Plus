@@ -41,6 +41,10 @@ const abstractSchema = new Schema(
       type: String,
       required: true,
     },
+    hardWords: {
+      type: Array,
+      required: true,
+    },
     created: {
       type: Date,
       default: Date.now,

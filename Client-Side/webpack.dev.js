@@ -3,7 +3,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
-  entry: "./src/index.js",
+  entry: [
+    // "react-devtools", // Add 'react-devtools' as the first item
+    "./src/index.js", // Your main entry file comes after
+  ],
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].js",

@@ -1,7 +1,12 @@
 import React from "react";
 import "./abstracts.css";
-
-export default function Abstracts({ abstracts }) {
+import { AppContext } from "../App";
+import HighlightDefinition from "./HighlightDefinition";
+export default function Abstracts() {
+  const { state } = React.useContext(AppContext);
+  const abstracts = state.abstractData;
+  // this is the hardwords and their definition array of objects from Wikipedia or gpt
+  const hardWordsDefinitionArray = abstracts.hardWords;
   const [version, setVersion] = React.useState(0);
   // split the paragphras instead of a block of text
   function split(abstract) {
@@ -11,6 +16,7 @@ export default function Abstracts({ abstracts }) {
     });
     return allParagraphs;
   }
+
   function handleSliderChange(e) {
     // change the value from string to integer
     setVersion(parseInt(e.target.value));
@@ -74,9 +80,8 @@ export default function Abstracts({ abstracts }) {
           <h4 className="original-title">{abstracts.originalTitle}</h4>
         )} */}
         {(version === 1 || version === 2) && (
-          <h4 className="summary-title">{abstracts.summerizedTitle}</h4>
+          <h4 className="title">{abstracts.summerizedTitle}</h4>
         )}
-
         {version === 1 && (
           <p className="elementary-abs">
             {split(abstracts.elementaryAbstract)}
@@ -85,9 +90,32 @@ export default function Abstracts({ abstracts }) {
         {version === 2 && (
           <p className="advanced-abs">{split(abstracts.advancedAbstract)}</p>
         )}
-        {/* {version === 3 && (
-          <h4 className="original-abs">{split(abstracts.originalAbstract)}</h4>
-        )} */}
+        {version === 3 && <h4 className="title">{abstracts.originalTitle}</h4>}
+        {/* {version === 4 &&
+          Object.keys(hardWords).map(function (key, index) {
+            return (
+              <div key={index}>
+                <p>Key: {key}</p>
+                <p>Value: {hardWords[key]}</p>
+              </div>
+            );
+          })} */}
+        {version === 3 &&
+          // Object.keys(hardWords).map(function (key, index) {
+          //   return (
+          //     <div key={index}>
+          //       <p>Key: {key}</p>
+          //       <p>Value: {hardWords[key]}</p>
+          //     </div>
+          //   );
+          // })
+
+          abstracts && (
+            <HighlightDefinition
+              hardWordsDefinitionArray={hardWordsDefinitionArray}
+              text={abstracts.originalAbstract}
+            />
+          )}
       </div>
     </div>
   );

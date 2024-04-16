@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 export default function Navigation() {
   const navLinkStyle = {
@@ -27,7 +27,7 @@ export default function Navigation() {
         width="100%"
       >
         <NavLink
-          to="/aiagent"
+          to="aiagent"
           style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
         >
           Chat
@@ -36,11 +36,17 @@ export default function Navigation() {
           style={{ borderRight: "3px solid #c9c9c9", height: "3rem" }}
         ></span>
         <NavLink
-          to="/main"
+          to="main"
           style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
         >
           Main
         </NavLink>
+        {/* <NavLink
+          to="test2"
+          style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
+        >
+          test2
+        </NavLink> */}
       </nav>
     </>
   );

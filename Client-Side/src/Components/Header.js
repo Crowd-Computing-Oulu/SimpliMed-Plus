@@ -1,31 +1,29 @@
-/*global chrome */
-import React, { useContext } from "react";
+import React from "react";
 import "./header.css";
-import { DoorClosed } from "react-bootstrap-icons";
+import {
+  BoxArrowRight,
+  DoorClosed,
+  DoorClosedFill,
+} from "react-bootstrap-icons";
 import { AppContext } from "../App";
+import { NavLink } from "react-router-dom";
 export default function Header() {
-  // const state = useContext(AppContext);
-  // console.log(state, "state in header is");
-  const context = React.useContext(AppContext);
-  const state = context.state;
-  const handleLogout = context.handleLogoutChange;
-
+  const { state, handleLogoutChange } = React.useContext(AppContext);
+  console.log(state, "state in header is");
   return (
     <div id="header" className="hiddenn header">
       <div className="d-flex flex-row justify-content-between">
-        <span id="header-username" className="tooltipUsername">
+        <span id="header-username" className="tooltip_1">
           {state.username}
-          <span className="tooltipUsernameText">Prolific Username</span>
+          <span className="usernameTooltipText">Prolific Username</span>
         </span>
-        <span
-          onClick={handleLogout}
-          className="logoutIcon-container tooltip"
-          id="logoutBtn"
-        >
-          <i className="bi bi-box-arrow-right"></i>
-          <DoorClosed size="1.4rem" color="white" />
-          <span className="tooltipText">Logout</span>
-        </span>
+        <NavLink to="/Login" onClick={handleLogoutChange}>
+          <span className="logoutIcon-container tooltip_1" id="logoutBtn">
+            {/* <DoorClosedFill size="2rem" color="white" /> */}
+            <BoxArrowRight size="1.8rem" color="rgb(255, 69, 69)" />
+            <span className=" logoutTooltipText ">Logout</span>
+          </span>
+        </NavLink>
       </div>
 
       {state.remainingFeedbacks === 0 && (

@@ -5,10 +5,8 @@ import Abstracts from "./Abstracts";
 import Loading from "./Loading";
 import { AppContext } from "../App";
 export default function Main() {
-  const context = React.useContext(AppContext);
-  const state = context.state;
-  const abstract = context.abstract;
-  const setState = context.setState;
+  const { state, abstract, setState } = React.useContext(AppContext);
+
   return (
     <>
       <GetSummary setState={setState} tabAbstract={abstract} />
