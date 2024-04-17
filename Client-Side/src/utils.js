@@ -1,4 +1,7 @@
+/*global chrome*/
 // TO GET THE TAB INFORMATION SUCH AS URL AND TEXT
+import { redirect } from "react-router-dom";
+
 export async function getTabInformation(url) {
   const response = await fetch(url);
   const text = await response.text();
@@ -32,5 +35,19 @@ export function updateState(setState, newState) {
       ...prevState,
       ...newState,
     };
+  });
+}
+
+export function requireAuth() {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
+      if (response.response === "NoToken") {
+        console.log("token exist, should the state be updated");
+        resolve("NoToken");
+      } else if (response.response === "TokenExist") {
+        console.log("token does exist, i should be redirected to layout");
+        resolve("TokenExist");
+      }
+    });
   });
 }
