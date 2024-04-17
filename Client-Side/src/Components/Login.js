@@ -4,27 +4,25 @@ import "./login.css";
 import { redirect, useActionData, Form, useNavigate } from "react-router-dom";
 import { updateState } from "../utils";
 
-// export function loader({ request }) {
-//   return new URL(request.url).searchParams.get("message");
-// }
 // passing down the login prop to the action
 export async function action({ request }, setState) {
-  console.log("rqu in action is", request);
-
   const formData = await request.formData();
   const username = formData.get("username");
-  chrome.runtime.sendMessage(
-    { action: "loginRequest", username },
-    (response) => {
-      console.log("response is", response);
-      if (response.response === "Login Successful") {
-        console.log("token exist");
-        updateState(setState, response.state);
-        return redirect("/layout");
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(
+      { action: "loginRequest", username },
+      (response) => {
+        console.log("response is", response);
+        if (response.response === "Login Successful") {
+          console.log("token exist");
+          updateState(setState, response.state);
+          resolve(redirect("/home/layout"));
+        } else {
+          resolve(null);
+        }
       }
-    }
-  );
-  return null;
+    );
+  });
 }
 
 export default function Login() {
