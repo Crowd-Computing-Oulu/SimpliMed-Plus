@@ -11,15 +11,19 @@ import {
 } from "react-router-dom";
 import "./App.css";
 
-import Login, { action as loginAction } from "./Components/Login";
+import Login, {
+  action as loginAction,
+  //  {loader as loginLoader}
+} from "./Components/Login";
 import AiAgent from "./Components/AiAgent";
 import { getTabInformation, updateState } from "./utils";
 import Error from "./Components/Error";
 import Test3 from "./Components/Test3";
+import Test1 from "./Components/Test1";
 import Test2 from "./Components/Test2";
 import Layout from "./Components/Layout";
 import Main from "./Components/Main";
-import AuthRequired from "./Components/AuthRequired";
+import { requireAuth } from "./utils";
 
 // var port = chrome.runtime.connect({ name: "popupConnection" });
 export const AppContext = React.createContext();
@@ -29,13 +33,18 @@ function App() {
   const [abstract, setAbstract] = React.useState(null);
   // Send a message each time the sidepanel opens
   React.useEffect(() => {
-    chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
-      console.log("state upon open is", response.state);
-      if (response.response === "TokenExist") {
-        updateState(setState, response.state);
-      } else {
-        console.log("token does not exist");
-      }
+    new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
+        console.log("state upon open is", response.state);
+        if (response.response === "TokenExist") {
+          console.log("Token exist on first open");
+          updateState(setState, response.state);
+          resolve(redirect("/"));
+        } else {
+          resolve(redirect("/login"));
+          console.log("token does not exist");
+        }
+      });
     });
   }, []);
 
@@ -85,6 +94,9 @@ function App() {
         updateState(setState, message.state);
       }
     });
+    return () => {
+      chrome.runtime.onMessage.removeListener();
+    };
   }, []);
 
   function handleLogoutChange() {
@@ -123,59 +135,38 @@ function App() {
   const router = createMemoryRouter(
     createRoutesFromElements(
       <>
-        <Route
-          path="/layout"
-          errorElement={<Error />}
-          // element={state && <Login />}
-          // action={(obj) => loginAction(obj, setState)}
-          element={<Layout />}
-          // element={<Test1 />}
-          // loader={() => {
-          //   // const baghali = false;
-          //   if (!state) {
-          //     console.log("we dont have state yet");
-          //     // <Navigate to="test3" />;
-          //     return redirect("/login");
-          //   }
-          //   return null;
-          // }}
-        >
-          {/* <Route
-          path="test1"
-          element={<Test1 />}
-          loader={async () => {
-            const isLoggedIn = false;
-            if (!isLoggedIn) {
-              return redirect("/login");
-            }
-            return null;
-          }}
-        /> */}
-          {/* <Route path="test2" element={<Test2 />} /> */}
-          {/* <Route
-            path="login"
-            errorElement={<Error />}
-            element={<Login />}
-            action={(obj) => loginAction(obj, setState)}
-          /> */}
-          {/* <Route element={<AuthRequired />}> */}
-          <Route
-            path="aiagent"
-            errorElement={<Error />}
-            element={<AiAgent />}
-          />
-          <Route
-            path="main"
-            errorElement={<Error />}
-            element={<Main />}
-            // loader={() => {
-            //   if (state && abstract) {
-            //     return null;
-            //     return null;
-            //   }
-            // }}
-          />
-          <Route path="test3" element={<Test3 />} />
+        <Route path="/">
+          <Route index element={<Layout />} />
+          <Route element={<Layout />}>
+            <Route
+              path="chat"
+              errorElement={<Error />}
+              element={<AiAgent />}
+              loader={async () => {
+                const authStatus = await requireAuth();
+                if (authStatus === "NoToken") {
+                  console.log("loading chat");
+                  return redirect("/login");
+                } else {
+                  return null;
+                }
+              }}
+            />
+            <Route
+              path="abstracts"
+              errorElement={<Error />}
+              element={<Main />}
+              loader={async () => {
+                console.log("abstracts layout");
+                const authStatus = await requireAuth();
+                if (authStatus === "NoToken") {
+                  return redirect("/login");
+                } else {
+                  return null;
+                }
+              }}
+            />
+          </Route>
         </Route>
         <Route
           path="/login"
@@ -186,7 +177,7 @@ function App() {
       </>
     ),
     {
-      initialEntries: ["/layout"],
+      initialEntries: ["/"],
       initialIndex: 0,
     }
   );
