@@ -26,8 +26,15 @@ export default function Navigation() {
         style={{ ...navStyle, boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
         width="100%"
       >
+        {/* <NavLink
+          to="."
+          end
+          style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
+        >
+          tests
+        </NavLink> */}
         <NavLink
-          to="aiagent"
+          to="/chat"
           style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
         >
           Chat
@@ -36,10 +43,10 @@ export default function Navigation() {
           style={{ borderRight: "3px solid #c9c9c9", height: "3rem" }}
         ></span>
         <NavLink
-          to="main"
+          to="/abstracts"
           style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
         >
-          Main
+          Abstracts
         </NavLink>
         {/* <NavLink
           to="test2"
