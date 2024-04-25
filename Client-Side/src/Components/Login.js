@@ -16,9 +16,9 @@ export async function action({ request }, setState) {
         if (response.response === "Login Successful") {
           console.log("token exist");
           updateState(setState, response.state);
-          resolve(redirect("/home/layout"));
+          resolve(redirect("/"));
         } else {
-          resolve(null);
+          reject("unsuccessful login");
         }
       }
     );
