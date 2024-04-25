@@ -48,12 +48,12 @@ export default function Navigation() {
         >
           Abstracts
         </NavLink>
-        {/* <NavLink
-          to="test2"
+        <NavLink
+          to="chat2"
           style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
         >
-          test2
-        </NavLink> */}
+          chat2
+        </NavLink>
       </nav>
     </>
   );

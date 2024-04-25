@@ -16,6 +16,8 @@ import Login, {
   //  {loader as loginLoader}
 } from "./Components/Login";
 import AiAgent from "./Components/AiAgent";
+import AiAgent2 from "./Components/AiAgent2";
+
 import { getTabInformation, updateState } from "./utils";
 import Error from "./Components/Error";
 import Test3 from "./Components/Test3";
@@ -142,6 +144,20 @@ function App() {
               path="chat"
               errorElement={<Error />}
               element={<AiAgent />}
+              loader={async () => {
+                const authStatus = await requireAuth();
+                if (authStatus === "NoToken") {
+                  console.log("loading chat");
+                  return redirect("/login");
+                } else {
+                  return null;
+                }
+              }}
+            />
+            <Route
+              path="chat2"
+              errorElement={<Error />}
+              element={<AiAgent2 />}
               loader={async () => {
                 const authStatus = await requireAuth();
                 if (authStatus === "NoToken") {
