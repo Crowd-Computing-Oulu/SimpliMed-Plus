@@ -181,3 +181,31 @@
     transform: scale(1, 1);
   }
 }
+
+/* SECOND CHAT  */
+.suggestions-container {
+  display: flex;
+  background-color: var(--tertiary-color);
+  margin-right: auto;
+  margin-left: auto;
+  width: fit-content;
+  padding: 10px;
+  border-radius: 10px;
+}
+.suggestions-container button {
+  font-family: var(--secondary-font);
+  background-color: rgb(242, 242, 242);
+  border: solid 1px gray;
+  padding: 10px;
+  border-radius: 15px;
+  margin: 5px;
+  min-width: 50px;
+}
+.suggestions-container .clicked {
+  background-color: var(--primary-color);
+  color: white;
+}
+.suggestions-container button:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
