@@ -24,8 +24,8 @@
     }
   },
   "icons": {
-    "16": "images/SimpliMedPlus.jpg",
-    "48": "images/SimpliMedPlus.jpg",
-    "128": "images/SimpliMedPlus.jpg"
+    "16": "images/SimpliMedPlus-16.png",
+    "48": "images/SimpliMedPlus-48.png",
+    "128": "images/SimpliMedPlus-128.png"
   }
 }
