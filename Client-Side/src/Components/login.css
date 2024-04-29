@@ -9,11 +9,13 @@
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  font-family: var(--secondary-font);
 }
 
 #login-container h2 {
   text-align: center;
   margin-bottom: 20px;
+  font-family: var(--secondary-font);
 }
 
 #login-container .form input[type="username"],
@@ -28,11 +30,17 @@
 #login-container .form button {
   width: 100%;
   padding: 10px;
-  background-color: #543884;
+  background-color: var(--primary-color);
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-family: var(--secondary-font);
+  font-size: 1.1rem;
+}
+#login-container .form button:hover {
+  background-color: var(--secondary-color);
+  color: #fff;
 }
 .error-message {
   color: rgba(255, 0, 0, 0.6);
