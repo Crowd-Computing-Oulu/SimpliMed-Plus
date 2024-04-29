@@ -45,6 +45,7 @@ async function requestToOpenAI(text, systemPrompt, userPrompt) {
     });
 
     const response = await Promise.race([responsePromise, timeoutPromise]);
+    // console.log("this is response in request to open ai", response);
 
     if (response instanceof Error) {
       // If response is an Error object (i.e., timeout error)
@@ -56,11 +57,18 @@ async function requestToOpenAI(text, systemPrompt, userPrompt) {
     }
 
     const message = response.data.choices[0].message.content;
+    // Check if the response indicates that the user input is not a medical question
+    if (message.includes("User input is not a medical question")) {
+      throw new Error("User input is not a medical question");
+    }
     let result = { message: message, status: "Ok" };
     return result;
   } catch (error) {
-    let result = { status: "Error" };
-    return result;
+    console.log("Error in requestToOpenAI", error.message);
+    // let result = { status: "Error", message: error.message };
+    // return result;
+    // throw new Error("failed to get response from openai", error.message);
+    throw error;
   }
 }
 async function requestToWikipedia(hardWordsJson) {
@@ -120,10 +128,7 @@ async function requestToWikipedia(hardWordsJson) {
   await Promise.all(promises);
   // Sorting the array based on the id
   mergedDefinition.sort((a, b) => a.id - b.id);
-  console.log(
-    "this is merged definitionnnnnnnnnnnnnnnnnnnnnnnnnnnnn after sooooooooooooooooooooooort",
-    mergedDefinition
-  );
+
   return mergedDefinition;
 }
 
@@ -312,42 +317,56 @@ exports.requestAbstract = async (req, res) => {
 // SIMPLIMED PLUS, USER ASK A QUESITON AND RECIEVE KEYWORD SUGGESTIONS
 exports.requestKeywords = async (req, res) => {
   console.log("keywords Requested.");
-  const results = await requestKeywords(req);
-  const suggestion = new Suggestion({
-    userID: req.user.id,
-    interactionID: req.body.interactionID,
-    initialQuestion: req.body.initialQuestion,
-    suggestedKeywords: results.suggestedKeywords,
-  });
-
-  await suggestion
-    .save()
-    .then(() => {
-      console.log("intial question submitted.");
-      res.status(200).send({
-        message: "intial question registered successfully",
-        suggestion,
-      });
-    })
-    .catch((err) => {
-      console.log("Error submitting initial question.", err);
-      res.status(500).send({ message: err });
+  try {
+    const results = await requestKeywordsOpenAI(req);
+    const suggestion = new Suggestion({
+      userID: req.user.id,
+      interactionID: req.body.interactionID,
+      initialQuestion: req.body.initialQuestion,
+      suggestedKeywords: results.suggestedKeywords,
     });
+    await suggestion
+      .save()
+      .then(() => {
+        console.log("intial question submitted.");
+        res.status(200).send({
+          message: "intial question registered successfully",
+          suggestion,
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({ message: err });
+      });
+  } catch (err) {
+    if (err.message === "User input is not a medical question") {
+      res.status(400).send({ message: "Bbbbbad request", statusCode: 400 });
+      return;
+    } else {
+      res.status(500).send({ message: "server failed" });
+      return;
+    }
+  }
   return;
 };
-async function requestKeywords(req) {
+async function requestKeywordsOpenAI(req) {
   const suggestKeywordsPrompt =
-    "Generate 3 keywords relevant to the question. Focus on terms that elucidate the relationship between the words and their topic, including related factors, mechanisms, and relevant research areas. These keywords should facilitate searching for pertinent articles on PubMed.";
+    "Generate 3 keywords relevant to the question. Focus on terms that elucidate the relationship between the words and their topic, including related factors, mechanisms, and relevant research areas. These keywords should facilitate searching for pertinent articles on PubMed. Please only type out: User input is not a medical question.";
   const systemPrompt =
-    "You suggest keywords in medical domain to help people search articles in pubmed database";
-
+    "You suggest keywords in medical domain to help people search articles in pubmed database. If the user input is not a medical question, you are only allowed to type the following and nothing other than that: User input is not a medical question.";
+  // try {
   const suggestedKeywords = await requestToOpenAI(
     req.body.initialQuestion,
     systemPrompt,
     suggestKeywordsPrompt
   );
-  console.log(suggestedKeywords);
+  console.log(
+    "suggested keywords isssssssssssssssssssssssssssss",
+    suggestedKeywords
+  );
   return {
     suggestedKeywords: suggestedKeywords.message,
   };
+  // } catch (err) {
+  //   console.log("error in requestKeywordsssssssssssssssssssssssss", err);
+  // }
 }
