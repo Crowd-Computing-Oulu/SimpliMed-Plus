@@ -1,24 +1,6 @@
-// const User = require("../models/user");
-const Abstract = require("../models/abstract");
-const Interaction = require("../models/interaction");
 const Feedback = require("../models/feedback");
-// const { sendHttpRequest, sendHttpsRequest } = require("../utils/requestUtils");
-const axios = require("axios");
 const study = require("../study/studyStatus.json");
 
-// const study = {
-//   phases: {
-//     "2023-07-03": {
-//       phrase: "An apple a day, keeps the cancer away!",
-//       requiredFeedbacks: 2,
-//     },
-//     "2023-07-04": {
-//       phrase: "An apple a day, keeps the cancer away!",
-//       requiredFeedbacks: 2,
-//     },
-//     "2023-07-05": { phrase: "Water Skin", requiredFeedbacks: 6 },
-//   },
-// };
 exports.requestStudyStatus = async (req, res) => {
   let isCompleted = true;
   for (const [key, value] of Object.entries(study.phases)) {
@@ -35,14 +17,6 @@ exports.requestStudyStatus = async (req, res) => {
         } else {
           isCompleted = false;
         }
-
-        // console.log(dailyFeedbacks);
-        // res.status(200).send({
-        //   message: "dailyFeedbacks",
-        //   dailyFeedbacks,
-        //   dailyPhrase,
-        //   requiredFeedbacks,
-        // });
       });
   }
 
