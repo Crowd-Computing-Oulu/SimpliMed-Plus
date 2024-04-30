@@ -3,6 +3,9 @@ import React from "react";
 import "./aiagent.css";
 // import icon
 import { ArrowUpRight } from "react-bootstrap-icons";
+import userAvatar from "../../../public/images/user-avatar.jpg";
+import aiAvatar from "../../../public/images/SimpliMedPlus-128.png";
+import { NavLink } from "react-router-dom";
 
 export default function AiAgent() {
   const textareaRef = React.useRef(null);
@@ -27,32 +30,41 @@ export default function AiAgent() {
         initialQuestion,
       },
       function (response) {
-        console.log("ai response in front", response.aiResponse);
-
+        // console.log("ai response in front", response.aiResponse);
         // Split suggestedKeywords into an array of lines
-        const suggestedKeywordsArray =
-          response.aiResponse.suggestedKeywords.split("\n");
-        // Create a new chat message for each line
-        const newAiChats = suggestedKeywordsArray.map((keyword) => {
-          const searchQuery = keyword
-            .replace(/^\d+\.\s*"?(.*?)"?$/, "$1")
-            .replace(/\s+/g, "+"); // Replace spaces with '+'
-          const url = `https://pubmed.ncbi.nlm.nih.gov/?term=${searchQuery}`;
-          return {
+
+        if (response.error) {
+          const newAiChat = {
             sender: "ai",
             message: (
-              <a href={url} target="_blank" rel="noopener noreferrer">
-                {keyword}
-                <ArrowUpRight />
-              </a>
+              <span>I can only provide keywords in the medical domain!</span>
             ),
           };
-        });
-
-        setIsTyping(false);
-        newAiChats.forEach((newChat) => {
-          setChatHistory((prevChatHistory) => [...prevChatHistory, newChat]);
-        });
+          setIsTyping(false);
+          setChatHistory((prevChatHistory) => [...prevChatHistory, newAiChat]);
+        } else {
+          const suggestedKeywordsArray = response.aiResponse.suggestedKeywords;
+          // Create a new chat message for each line
+          const newAiChats = suggestedKeywordsArray.map((keyword) => {
+            const searchQuery = keyword
+              .replace(/^\d+\.\s*"?(.*?)"?$/, "$1")
+              .replace(/\s+/g, "+"); // Replace spaces with '+'
+            const url = `https://pubmed.ncbi.nlm.nih.gov/?term=${searchQuery}`;
+            return {
+              sender: "ai",
+              message: (
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                  {keyword}
+                  <ArrowUpRight />
+                </a>
+              ),
+            };
+          });
+          setIsTyping(false);
+          newAiChats.forEach((newChat) => {
+            setChatHistory((prevChatHistory) => [...prevChatHistory, newChat]);
+          });
+        }
       }
     );
     // clear input field
@@ -79,11 +91,15 @@ export default function AiAgent() {
             {chat.sender === "user" ? (
               <>
                 <div className="message">{chat.message}</div>
-                <div className="avatar"></div>
+                <div className="avatar">
+                  <img alt="user avatar" src={userAvatar} />
+                </div>
               </>
             ) : (
               <>
-                <div className="avatar"></div>
+                <div className="avatar">
+                  <img alt="ai avatar" src={aiAvatar} />
+                </div>
                 <div className="message">{chat.message}</div>
               </>
             )}
@@ -92,7 +108,9 @@ export default function AiAgent() {
         {isTyping && (
           <>
             <div className="chat-container mt-1 isTyping">
-              <div className="avatar"></div>
+              <div className="avatar">
+                <img alt="ai avatar" src={aiAvatar} />
+              </div>
               <div className="message ">
                 <div className="dot-elastic"></div>
               </div>

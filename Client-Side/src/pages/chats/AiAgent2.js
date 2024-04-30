@@ -2,8 +2,9 @@
 import React from "react";
 import "./aiagent.css";
 // import icon
-import { ArrowUpRight, Repeat1 } from "react-bootstrap-icons";
+import { ArrowUpRight } from "react-bootstrap-icons";
 import { NavLink } from "react-router-dom";
+import aiAvatar from "../../../public/images/SimpliMedPlus-128.png";
 
 export default function AiAgent2() {
   const textareaRef = React.useRef(null);
@@ -99,7 +100,10 @@ export default function AiAgent2() {
       {/* Render Chat History  */}
       <div className="chatbox">
         <div className="chat-container mt-1 ai">
-          <div className="avatar"></div>
+          <div className="avatar">
+            {" "}
+            <img alt="ai avatar" src={aiAvatar} />
+          </div>
           <div className="message">
             Did you Find the information you were looking for?{" "}
           </div>
@@ -122,21 +126,19 @@ export default function AiAgent2() {
         </div>
         {foundInfo === "no" && (
           <div className="suggestions-container mt-3 d-flex flex-column justify-content-center align-items-center">
-            <button
-              className="suggestion-item response-goBack"
-              id=""
-              onClick={handleClick}
-              ahref=""
+            <NavLink
+              to="https://pubmed.ncbi.nlm.nih.gov/"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <a
-                href="https://pubmed.ncbi.nlm.nih.gov/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "black" }}
+              <button
+                className="suggestion-item response-goBack"
+                id=""
+                onClick={handleClick}
               >
                 Go back to PubMed search page!
-              </a>
-            </button>
+              </button>
+            </NavLink>
 
             <NavLink to="/chat">
               <button
