@@ -3,7 +3,7 @@ import React from "react";
 import GetSummary from "./GetSummary";
 import Abstracts from "./Abstracts";
 import Loading from "./Loading";
-import { AppContext } from "../App";
+import { AppContext } from "../../App";
 export default function Main() {
   const { state, abstract, setState } = React.useContext(AppContext);
 

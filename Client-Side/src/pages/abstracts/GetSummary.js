@@ -1,8 +1,8 @@
 /*global chrome*/
 import React from "react";
 import "./getSummary.css";
-import { AppContext } from "../App";
-import { updateState } from "../utils";
+import { AppContext } from "../../App";
+import { updateState } from "../../utils";
 import { Exclamation } from "react-bootstrap-icons";
 export default function GetSummary() {
   const { state, setState, abstract, wrongPage } = React.useContext(AppContext);
@@ -13,20 +13,50 @@ export default function GetSummary() {
 
   const [error, setError] = React.useState("");
 
+  // async function getSummary() {
+  //   console.log("getSummary");
+  //   chrome.runtime.sendMessage(
+  //     {
+  //       action: "summaryRequest",
+  //       tabAbstract: abstract,
+  //     },
+  //     (response) => {
+  //       if (response.response === "Error") {
+  //         setError(response.error);
+  //       }
+  //       updateState(setState, response.state);
+  //     }
+  //   );
+  // }
+
   async function getSummary() {
     console.log("getSummary");
-    chrome.runtime.sendMessage(
-      {
-        action: "summaryRequest",
-        tabAbstract: abstract,
-      },
-      (response) => {
-        if (response.response === "Error") {
-          setError(response.error);
-        }
-        updateState(setState, response.state);
+
+    try {
+      const response = await new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage(
+          {
+            action: "summaryRequest",
+            tabAbstract: abstract,
+          },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              reject(chrome.runtime.lastError);
+            } else {
+              resolve(response);
+            }
+          }
+        );
+      });
+
+      if (response.response === "Error") {
+        setError(response.error);
       }
-    );
+
+      updateState(setState, response.state);
+    } catch (error) {
+      console.error("Error requesting summary:", error);
+    }
   }
 
   function summaryButton() {

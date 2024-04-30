@@ -1,6 +1,6 @@
 import React from "react";
 import "./abstracts.css";
-import { AppContext } from "../App";
+import { AppContext } from "../../App";
 import HighlightDefinition from "./HighlightDefinition";
 export default function Abstracts() {
   const { state } = React.useContext(AppContext);
