@@ -1,52 +1,12 @@
 /*global chrome*/
-// chrome.runtime.onConnect.addListener(function (port) {
-//   if (port.name === "popupConnection") {
-//     port.onDisconnect.addListener(function () {
-//       // console.log("popup has been closed");
-//     });
-//   }
-// });
-// chrome.commands.onCommand.addListener(function (command) {
-//   if (command === "open-devtools") {
-//     console.log("devtools should be open");
-//     chrome.devtools.inspectedWindow.eval("DevToolsAPI.showPanel('console')");
-//   }
-// });
-
-// ----------------------------------
-// chrome.action.onClicked.addListener(function (tab) {
-//   if (tab.url.startsWith("http")) {
-//     chrome.debugger.attach({ tabId: tab.id }, "1.2", function () {
-//       chrome.debugger.sendCommand(
-//         { tabId: tab.id },
-//         "Network.enable",
-//         {},
-//         function () {
-//           if (chrome.runtime.lastError) {
-//             console.error(chrome.runtime.lastError);
-//           }
-//         }
-//       );
-//     });
-//   } else {
-//     console.log("Debugger can only be attached to HTTP/HTTPS pages.");
-//   }
-// });
-
-// chrome.debugger.onEvent.addListener(function (source, method, params) {
-//   if (method === "Network.responseReceived") {
-//     console.log("Response received:", params.response);
-//     // Perform your desired action with the response data
-//   }
-// });
 
 // -------------------------
+// A state should have these values overall
 let state = {
   // accessToken: "",
   isLoading: false,
   difficultyLevel: 0,
   instructionShown: false,
-
   // abstractData: {
   //   interactionId: "test",
   //   url: "test",
@@ -76,7 +36,7 @@ let state = {
 chrome.tabs.onActivated.addListener(function (activeInfo) {
   chrome.tabs.get(activeInfo.tabId, function (tab) {
     // Access the tab URL
-    console.log("Tab switched:", tab.url);
+    // console.log("Tab switched:", tab.url);
     // send a message to sidepanel for tab switch with the url
     chrome.runtime.sendMessage({
       action: "Tab Switched",
@@ -88,7 +48,7 @@ chrome.tabs.onActivated.addListener(function (activeInfo) {
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   // Check if the URL has changed
   if (changeInfo.url) {
-    console.log("URL changed:", changeInfo.url);
+    // console.log("URL changed:", changeInfo.url);
     // Send a message to the side panel for the URL change
     chrome.runtime.sendMessage({
       action: "URL Changed",
@@ -174,7 +134,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     return true;
   }
   if (message.action === "summaryRequest") {
-    console.log("new summary has been requested");
+    // console.log("new summary has been requested");
     if (state.accessToken) {
       // All the information from the previous abstract will be deleted from the state
       delete state.abstractData;
@@ -227,15 +187,20 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
   if (message.action === "requestKeywords") {
     requestKeywords(message.initialQuestion)
-      .then(function (result) {
+      .then((result) => {
         console.log(result);
         sendResponse({
           response: "Ai response",
           aiResponse: result,
         });
       })
-      .catch(function (error) {
-        console.error("Submit user initial question failed:", error);
+      .catch((error) => {
+        console.log("Error in workerjs", error);
+        sendResponse({
+          error: "Error",
+          message: error.message,
+        });
+        // console.error("Submit user initial question failed:", error);
       });
     // To indicate that sendResponse will be called asynchronously
     return true;
@@ -274,7 +239,7 @@ async function requestStudyStatus() {
             reject({ message: responseData.message });
           }
         } catch (error) {
-          console.erorr("Error Fetching study status");
+          console.error("Error Fetching study status");
           reject(error);
         }
       } else {
@@ -347,10 +312,6 @@ async function clearChromeStorage() {
   return new Promise((resolve, reject) => {
     chrome.storage.local.remove(["username", "accessToken"], function () {
       resolve();
-      // if (chrome.runtime.lastError) {
-      //   reject(chrome.runtime.lastError);
-      // } else {
-      // }
     });
   });
 }
@@ -370,7 +331,6 @@ async function setChromeStorage() {
 
 // REQUEST LOGIN
 async function requestLogin(username) {
-  // console.log("I am the user in the service worker", username);
   let accessToken = "";
   const options = {
     method: "POST",
@@ -415,11 +375,12 @@ async function requestKeywords(initialQuestion) {
           let result = {};
           console.log(responseData);
           result.suggestedKeywords = responseData.suggestion.suggestedKeywords;
+          console.log(
+            "it should be an arrayaaaaaaaaaaaaaaaaaaaaaaaaa",
+            result.suggestedKeywords
+          );
           result.message = responseData.message;
-          // adding the interactionId in abstractData
-          //   responseData.abstract.interactionID = responseData.interactionId;
-          //   result.abstract = responseData.abstract;
-          //   result.feedback = responseData.feedback;
+          console.log("this is the messsssssssssssssage", result.message);
           resolve(result);
         } else {
           reject({ message: responseData.message });
