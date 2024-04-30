@@ -20,7 +20,7 @@ const suggestionSchema = new Schema(
     },
     //  Ai Suggest keywords to user
     suggestedKeywords: {
-      type: String,
+      type: Array,
       required: true,
     },
     created: {

@@ -318,17 +318,20 @@ exports.requestAbstract = async (req, res) => {
 exports.requestKeywords = async (req, res) => {
   console.log("keywords Requested.");
   try {
-    const results = await requestKeywordsOpenAI(req);
+    const suggestedKeywords = await requestKeywordsOpenAI(req);
+    console.log("resulllllllllllllllllllllllllt", suggestedKeywords);
+    console.log("sugesteeeeet", suggestedKeywords);
+
     const suggestion = new Suggestion({
       userID: req.user.id,
       interactionID: req.body.interactionID,
       initialQuestion: req.body.initialQuestion,
-      suggestedKeywords: results.suggestedKeywords,
+      suggestedKeywords: suggestedKeywords,
     });
     await suggestion
       .save()
       .then(() => {
-        console.log("intial question submitted.");
+        console.log("intial question submitted and keywords.");
         res.status(200).send({
           message: "intial question registered successfully",
           suggestion,
@@ -350,23 +353,28 @@ exports.requestKeywords = async (req, res) => {
 };
 async function requestKeywordsOpenAI(req) {
   const suggestKeywordsPrompt =
-    "Generate 3 keywords relevant to the question. Focus on terms that elucidate the relationship between the words and their topic, including related factors, mechanisms, and relevant research areas. These keywords should facilitate searching for pertinent articles on PubMed. Please only type out: User input is not a medical question.";
+    "Generate keywords relevant to the question. Focus on terms that elucidate the relationship between the words and their topic, including related factors, mechanisms, and relevant research areas. These keywords should facilitate searching for pertinent articles on PubMed. You should provide at least 3 phrases that contains keywords relevent to the question. seperate each phrase with a comma. ";
   const systemPrompt =
-    "You suggest keywords in medical domain to help people search articles in pubmed database. If the user input is not a medical question, you are only allowed to type the following and nothing other than that: User input is not a medical question.";
-  // try {
-  const suggestedKeywords = await requestToOpenAI(
+    "You suggest keywords in medical domain to help people search articles in pubmed database. You provide the answers in json format with a property called Results. Results property has an array of the suggested phrases elements. Each suggested phrase can contain few keywords. If the user input is not a medical or bio question or related to health, you are only allowed to create a json with property of Element that has an array with one element. the element is :User input is not a medical question.";
+
+  const results = await requestToOpenAI(
     req.body.initialQuestion,
     systemPrompt,
     suggestKeywordsPrompt
   );
+  const resultsJson = results.message;
+  console.log(
+    "suggested keywords jjjjjjjjjjjjjjjjsssssssssssssssssssssssssssss",
+    resultsJson
+  );
+  var resultsObject = JSON.parse(resultsJson);
+
+  // Access the "Phrases" property and store its array in the "suggestedKeywords" array
+  var suggestedKeywords = resultsObject.Results;
+
   console.log(
     "suggested keywords isssssssssssssssssssssssssssss",
     suggestedKeywords
   );
-  return {
-    suggestedKeywords: suggestedKeywords.message,
-  };
-  // } catch (err) {
-  //   console.log("error in requestKeywordsssssssssssssssssssssssss", err);
-  // }
+  return suggestedKeywords;
 }
