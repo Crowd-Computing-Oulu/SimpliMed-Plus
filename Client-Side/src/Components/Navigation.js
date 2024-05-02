@@ -1,58 +1,52 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { JournalMedical, ChatDots, InfoCircle } from "react-bootstrap-icons";
 export default function Navigation() {
   const navLinkStyle = {
     textDecoration: "none",
-    color: "black",
     fontSize: "1rem",
     fontWeight: "bold",
     fontFamily: "var(--primary-font)",
+    color: "var(--primary-color)",
   };
   const activeStyle = {
     textDecoration: "underline",
     fontSize: "1rem",
-    color: "blue",
+    color: "var(--quaternary-color)",
     fontFamily: "var(--primary-font)",
     fontWeight: "bolder",
   };
   const navStyle = {
     padding: "0.5rem",
-    borderBottom: "3px solid #c9c9c9",
+    // borderBottom: "3px solid #c9c9c9",
+    height: "4rem",
+    boxShadow: "rgb(168, 80, 119) 10px 1px 3px",
   };
+
   return (
     <>
       <nav
+        style={navStyle}
         className="d-flex flex-row align-items-center justify-content-around"
-        style={{ ...navStyle, boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)" }}
         width="100%"
       >
-        {/* <NavLink
-          to="."
-          end
-          style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
-        >
-          tests
-        </NavLink> */}
         <NavLink
           to="/chat"
           style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
         >
-          Chat
+          <ChatDots size="1.8rem" />
         </NavLink>
-        <span
-          style={{ borderRight: "3px solid #c9c9c9", height: "3rem" }}
-        ></span>
         <NavLink
           to="/abstracts"
           style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
         >
-          Abstracts
+          <JournalMedical size="1.8rem" />
         </NavLink>
         <NavLink
-          to="chat2"
+          to="help"
           style={({ isActive }) => (isActive ? activeStyle : navLinkStyle)}
         >
-          chat2
+          <InfoCircle size="1.8rem" />
         </NavLink>
       </nav>
     </>
