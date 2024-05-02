@@ -64,7 +64,7 @@ export default function GetSummary() {
       if (wrongPage) {
         return (
           <div className="d-flex flex-column align-items-center justify-content-center">
-            <p className="p-3">
+            <p className="px-3">
               This page doesn't have any abstract content. Please go to the
               PubMed website and choose an article with an available abstract.
             </p>
@@ -128,8 +128,8 @@ export default function GetSummary() {
 
   return (
     <>
-      <div className="getSummary-container flex-grow-0">
-        <div className="d-flex flex-column align-items-center justify-content-center pt-3 ">
+      <div className="getSummary-container flex-grow-0 mt-4">
+        <div className="d-flex flex-column align-items-center justify-content-center  ">
           {state &&
             summaryButton(
               state.isLoading,
