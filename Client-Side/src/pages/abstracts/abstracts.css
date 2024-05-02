@@ -90,3 +90,38 @@ datalist {
   justify-content: space-between;
   writing-mode: horizontal-lr;
 }
+/* /////////////////// */
+/* New style for difficulty-level */
+.difficulty-items {
+  border: 1px solid var(--quaternary-color);
+  border-radius: 5px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+}
+.difficulty-items div {
+  height: 2.5rem;
+  font-family: var(--secondary-font);
+  flex: 1;
+  text-align: center;
+  border-right: 1px solid var(--quaternary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.difficulty-items div:hover {
+  background-color: var(--quaternary-color);
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.difficulty-items div:last-child {
+  border-right: none;
+}
+.difficulty-items .active {
+  background-color: var(--quaternary-color);
+  color: white;
+  font-size: 1.1rem;
+}

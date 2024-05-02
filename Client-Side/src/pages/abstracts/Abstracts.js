@@ -7,7 +7,7 @@ export default function Abstracts() {
   const abstracts = state.abstractData;
   // this is the hardwords and their definition array of objects from Wikipedia or gpt
   const hardWordsDefinitionArray = abstracts.hardWords;
-  const [version, setVersion] = React.useState(0);
+  const [version, setVersion] = React.useState(1);
   // split the paragphras instead of a block of text
   function split(abstract) {
     const paragraphs = abstract.split("\n");
@@ -21,12 +21,39 @@ export default function Abstracts() {
     // change the value from string to integer
     setVersion(parseInt(e.target.value));
   }
+  function handleClick(e) {
+    // change the value from string to integer
+    document.querySelectorAll(".difficulty-item").forEach((item) => {
+      item.classList.remove("active");
+    });
+    e.target.classList.add("active");
+
+    if (e.target.innerText === "Elementary") {
+      setVersion(1);
+    } else if (e.target.innerText === "Advanced") {
+      setVersion(2);
+    } else if (e.target.innerText === "Original") {
+      setVersion(3);
+    }
+  }
   return (
-    <div className="main-content " id="main-content">
-      <div id="difficulty-lvl" className="">
+    <div className="main-content mt-4" id="main-content">
+      <div className="difficulty-items">
+        <div className="difficulty-item active" onClick={handleClick}>
+          Elementary
+        </div>
+        <div className="difficulty-item" onClick={handleClick}>
+          Advanced
+        </div>
+        <div className="difficulty-item" onClick={handleClick}>
+          Original
+        </div>
+      </div>
+      {/* <div id="difficulty-lvl" className="">
         <span className="difficulty-lvl__title">
           Change the version of the abstract
         </span>
+
         <div className="difficulty-lvl__slider">
           <input
             type="range"
@@ -48,7 +75,7 @@ export default function Abstracts() {
             <option value="4">Finish</option>
           </datalist>
         </div>
-      </div>
+      </div> */}
       {version === 0 && (
         <div id="difficulty-lvl_instructions" className=" mt-5">
           <p className="fw-bolder">
