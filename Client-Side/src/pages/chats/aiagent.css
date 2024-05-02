@@ -208,16 +208,16 @@
   font-family: var(--secondary-font);
   background-color: rgb(242, 242, 242);
   border: solid 1px gray;
-  padding: 10px;
-  border-radius: 15px;
+  padding: 6px 10px;
+  border-radius: 12px;
   margin: 5px;
   min-width: 50px;
 }
 .suggestions-container .clicked {
-  background-color: var(--primary-color);
+  background-color: var(--quaternary-color);
   color: white;
 }
 .suggestions-container button:hover {
-  background-color: var(--primary-color);
+  background-color: var(--quaternary-color);
   color: white;
 }
