@@ -51,7 +51,7 @@ export default function Login() {
         />
         {/* Passing the new username to the app component  */}
         <button
-          className="mt-4 p-2"
+          className="mt-2 p-2"
           style={navigation.state === "submitting" ? btnSubmitting : null}
           // disbaled={navigation.state === "submitting"}
         >
