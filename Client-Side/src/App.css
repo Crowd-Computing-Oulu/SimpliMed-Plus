@@ -15,16 +15,16 @@
   --primary-color: #3d8aa4;
   --secondary-color: #543884;
   --tertiary-color: #e2f0f7;
+  --quaternary-color: #a85077;
   --primary-font: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --secondary-font: "Kanit", sans-serif;
 }
 
 body {
   max-height: fit-content;
-  min-width: 360px;
+  min-width: 350px;
   overflow-y: scroll;
   overflow-x: hidden;
-
   position: sticky;
   top: 0;
 }
