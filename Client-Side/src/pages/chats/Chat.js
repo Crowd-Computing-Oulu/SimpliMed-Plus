@@ -4,7 +4,7 @@ import "./aiagent.css";
 // import icon
 import { ArrowUpRight } from "react-bootstrap-icons";
 import userAvatar from "../../../public/images/user-avatar.jpg";
-import aiAvatar from "../../../public/images/SimpliMedPlus-128.png";
+import aiAvatar from "../../../public/images/ai-avatar.jpg";
 import { NavLink } from "react-router-dom";
 
 export default function AiAgent() {
@@ -78,7 +78,7 @@ export default function AiAgent() {
     }
   }
   return (
-    <div className="aiagent aiagent-container mt-1 ">
+    <div className="aiagent aiagent-container mt-3 ">
       {/* Render Chat History  */}
       <div className="chatbox">
         {chatHistory.map((chat, index) => (
@@ -98,7 +98,11 @@ export default function AiAgent() {
             ) : (
               <>
                 <div className="avatar">
-                  <img alt="ai avatar" src={aiAvatar} />
+                  <img
+                    alt="ai avatar"
+                    src={aiAvatar}
+                    style={{ borderRadius: "50%" }}
+                  />
                 </div>
                 <div className="message">{chat.message}</div>
               </>
@@ -109,7 +113,11 @@ export default function AiAgent() {
           <>
             <div className="chat-container mt-1 isTyping">
               <div className="avatar">
-                <img alt="ai avatar" src={aiAvatar} />
+                <img
+                  alt="ai avatar"
+                  src={aiAvatar}
+                  style={{ borderRadius: "50%" }}
+                />
               </div>
               <div className="message ">
                 <div className="dot-elastic"></div>
@@ -124,7 +132,7 @@ export default function AiAgent() {
           ref={textareaRef}
           type="text"
           id="user-input"
-          placeholder="Type your message here"
+          placeholder="Type your medical question here..."
           onKeyDown={handleKeyDown}
         />
         <button

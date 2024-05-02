@@ -4,7 +4,7 @@ import "./aiagent.css";
 // import icon
 import { ArrowUpRight } from "react-bootstrap-icons";
 import { NavLink } from "react-router-dom";
-import aiAvatar from "../../../public/images/SimpliMedPlus-128.png";
+import aiAvatar from "../../../public/images/ai-avatar.jpg";
 
 export default function AiAgent2() {
   const textareaRef = React.useRef(null);
@@ -96,13 +96,17 @@ export default function AiAgent2() {
   // Add "clicked" class to the clicked button
 
   return (
-    <div className="aiagent aiagent-container mt-1 ">
+    <div className="aiagent aiagent-container mt-3 ">
       {/* Render Chat History  */}
       <div className="chatbox">
         <div className="chat-container mt-1 ai">
           <div className="avatar">
             {" "}
-            <img alt="ai avatar" src={aiAvatar} />
+            <img
+              alt="ai avatar"
+              src={aiAvatar}
+              style={{ borderRadius: "50%" }}
+            />
           </div>
           <div className="message">
             Did you Find the information you were looking for?{" "}

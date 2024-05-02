@@ -6,28 +6,19 @@ import {
   RouterProvider,
   redirect,
   Route,
-  Navigate,
   createRoutesFromElements,
 } from "react-router-dom";
 import "./App.css";
 
-import Login, {
-  action as loginAction,
-  //  {loader as loginLoader}
-} from "./Components/Login";
-import AiAgent from "./Components/AiAgent";
-import AiAgent2 from "./Components/AiAgent2";
-
+import Login, { action as loginAction } from "./Components/Login";
+import Chat from "./pages/chats/Chat";
+import Help from "./pages/chats/Help";
 import { getTabInformation, updateState } from "./utils";
 import Error from "./Components/Error";
-import Test3 from "./Components/Test3";
-import Test1 from "./Components/Test1";
-import Test2 from "./Components/Test2";
 import Layout from "./Components/Layout";
-import Main from "./Components/Main";
+import Main from "./pages/abstracts/Main";
 import { requireAuth } from "./utils";
 
-// var port = chrome.runtime.connect({ name: "popupConnection" });
 export const AppContext = React.createContext();
 function App() {
   const [wrongPage, setWrongPage] = React.useState(false);
@@ -37,9 +28,8 @@ function App() {
   React.useEffect(() => {
     new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
-        console.log("state upon open is", response.state);
         if (response.response === "TokenExist") {
-          console.log("Token exist on first open");
+          console.log("Token exist");
           updateState(setState, response.state);
           resolve(redirect("/"));
         } else {
@@ -59,7 +49,6 @@ function App() {
       sendResponse
     ) {
       if (message.action === "Tab Switched") {
-        console.log("tab is swtiched and this is the new url,", message.url);
         try {
           const abstractInfo = await getTabInformation(message.url);
           setAbstract(abstractInfo);
@@ -69,7 +58,6 @@ function App() {
         }
       }
       if (message.action === "URL Changed") {
-        console.log("tab is swtiched and this is the new url,", message.url);
         try {
           const abstractInfo = await getTabInformation(message.url);
           setAbstract(abstractInfo);
@@ -77,9 +65,6 @@ function App() {
         } catch (error) {
           setWrongPage(true);
         }
-
-        // when url changes, delete the state.abstractData
-        // updateState(setState, message.state);
       }
     });
   }, []);
@@ -91,8 +76,6 @@ function App() {
       sendResponse
     ) {
       if (message.action === "updateState") {
-        console.log("state will be update in the useeffect ");
-        console.log(message.state);
         updateState(setState, message.state);
       }
     });
@@ -102,15 +85,10 @@ function App() {
   }, []);
 
   function handleLogoutChange() {
-    console.log("user has logged out");
     // Deleting the state upon logout
     setState(null);
     chrome.runtime.sendMessage({ action: "logoutRequest" });
   }
-
-  React.useEffect(() => {
-    console.log("new state", state);
-  }, [state]);
 
   React.useEffect(() => {
     const fetchTabData = async () => {
@@ -133,7 +111,6 @@ function App() {
   }, []);
 
   // React Router Dom
-
   const router = createMemoryRouter(
     createRoutesFromElements(
       <>
@@ -143,11 +120,10 @@ function App() {
             <Route
               path="chat"
               errorElement={<Error />}
-              element={<AiAgent />}
+              element={<Chat />}
               loader={async () => {
                 const authStatus = await requireAuth();
                 if (authStatus === "NoToken") {
-                  console.log("loading chat");
                   return redirect("/login");
                 } else {
                   return null;
@@ -155,13 +131,12 @@ function App() {
               }}
             />
             <Route
-              path="chat2"
+              path="help"
               errorElement={<Error />}
-              element={<AiAgent2 />}
+              element={<Help />}
               loader={async () => {
                 const authStatus = await requireAuth();
                 if (authStatus === "NoToken") {
-                  console.log("loading chat");
                   return redirect("/login");
                 } else {
                   return null;
@@ -173,7 +148,6 @@ function App() {
               errorElement={<Error />}
               element={<Main />}
               loader={async () => {
-                console.log("abstracts layout");
                 const authStatus = await requireAuth();
                 if (authStatus === "NoToken") {
                   return redirect("/login");
@@ -193,6 +167,7 @@ function App() {
       </>
     ),
     {
+      // The first path is /
       initialEntries: ["/"],
       initialIndex: 0,
     }
