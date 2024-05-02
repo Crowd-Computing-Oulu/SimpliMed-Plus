@@ -31,11 +31,7 @@ export default function Layout() {
                 <span> The token will be saved on your own computer!</span>
               </p>
             </div>
-            <img
-              alt="heart and books"
-              // src="../../public/images/Home-Background.png"
-              src={homeBG}
-            />
+            <img alt="heart and books" src={homeBG} />
             <NavLink to="/login">
               <button
                 className="btn fw-bold mt-3 "
