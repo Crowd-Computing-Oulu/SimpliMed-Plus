@@ -6,23 +6,46 @@ import { ArrowUpRight } from "react-bootstrap-icons";
 import userAvatar from "../../../public/images/user-avatar.jpg";
 import aiAvatar from "../../../public/images/ai-avatar.jpg";
 import { NavLink } from "react-router-dom";
+import { AppContext } from "../../App";
 
 export default function AiAgent() {
+  const [isTyping, setIsTyping] = React.useState(false);
   const textareaRef = React.useRef(null);
   const [initialQuestion, setInitialQuestion] = React.useState("");
-  const [chatHistory, setChatHistory] = React.useState([
-    {
-      sender: "ai",
-      message: "Aks a question and i will find relevant keywords for you",
-    },
-  ]);
-  const [isTyping, setIsTyping] = React.useState(false);
+  const { state, setState } = React.useContext(AppContext);
+  console.log("state in the chat component,", state);
+  console.log("state.chathistory in the chat component,", state.chatHistory);
+  // const [chatHistory, setChatHistory] = React.useState([
+  //   {
+  //     sender: "ai",
+  //     message:
+  //       "Aks a medical question and i will find relevant keywords for you!",
+  //   },
+  // ]);
+  // React.useEffect(() => {
+  //   // Perform some setup actions
+  //   if (!state.chatHistory) {
+  //     console.log("Will create a chat History");
+  //     setState((prevState) => ({ ...prevState, chatHistory: chatHistory }));
+  //   }
+  //   console.log("This code will run everytim to update the chathistory");
+  //   setState((prevState) => ({
+  //     ...prevState,
+  //     chatHistory: chatHistory,
+  //   }));
+  //   console.log("chathistory", state.chatHistory);
+  // }, [chatHistory]); // The empty array ensures this effect runs once on mount and once on unmount
+
   function submitUserQuestion() {
     const newUserChat = {
       sender: "user",
       message: initialQuestion,
     };
-    setChatHistory((prevChatHistory) => [...prevChatHistory, newUserChat]);
+    setState((prevState) => ({
+      ...prevState,
+      chatHistory: [...prevState.chatHistory, newUserChat],
+    }));
+    // setChatHistory((prevChatHistory) => [...prevChatHistory, newUserChat]);
     setIsTyping(true);
     chrome.runtime.sendMessage(
       {
@@ -32,7 +55,6 @@ export default function AiAgent() {
       function (response) {
         // console.log("ai response in front", response.aiResponse);
         // Split suggestedKeywords into an array of lines
-
         if (response.error) {
           const newAiChat = {
             sender: "ai",
@@ -41,7 +63,11 @@ export default function AiAgent() {
             ),
           };
           setIsTyping(false);
-          setChatHistory((prevChatHistory) => [...prevChatHistory, newAiChat]);
+          // setChatHistory((prevChatHistory) => [...prevChatHistory, newAiChat]);
+          setState((prevState) => ({
+            ...prevState,
+            chatHistory: [...prevState.chatHistory, newAiChat],
+          }));
         } else {
           const suggestedKeywordsArray = response.aiResponse.suggestedKeywords;
           // Create a new chat message for each line
@@ -53,16 +79,20 @@ export default function AiAgent() {
             return {
               sender: "ai",
               message: (
-                <a href={url} target="_blank" rel="noopener noreferrer">
+                <NavLink to="/abstracts" onClick={() => changePath(url)}>
                   {keyword}
                   <ArrowUpRight />
-                </a>
+                </NavLink>
               ),
             };
           });
           setIsTyping(false);
           newAiChats.forEach((newChat) => {
-            setChatHistory((prevChatHistory) => [...prevChatHistory, newChat]);
+            // setChatHistory((prevChatHistory) => [...prevChatHistory, newChat]);
+            setState((prevState) => ({
+              ...prevState,
+              chatHistory: [...prevState.chatHistory, newChat],
+            }));
           });
         }
       }
@@ -77,38 +107,49 @@ export default function AiAgent() {
       submitUserQuestion();
     }
   }
+  function changePath(url) {
+    chrome.tabs.create({ url: url });
+  }
+  // const chatHistoryEl = () => {
+  //   if (state.chatHistory) {
+  //     return state.chatHistory;
+  //   } else {
+  //     return chatHistory;
+  //   }
+  // };
   return (
     <div className="aiagent aiagent-container mt-3 ">
       {/* Render Chat History  */}
       <div className="chatbox">
-        {chatHistory.map((chat, index) => (
-          <div
-            key={index}
-            className={`chat-container mt-1 ${
-              chat.sender === "ai" ? "ai" : "user"
-            }`}
-          >
-            {chat.sender === "user" ? (
-              <>
-                <div className="message">{chat.message}</div>
-                <div className="avatar">
-                  <img alt="user avatar" src={userAvatar} />
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="avatar">
-                  <img
-                    alt="ai avatar"
-                    src={aiAvatar}
-                    style={{ borderRadius: "50%" }}
-                  />
-                </div>
-                <div className="message">{chat.message}</div>
-              </>
-            )}
-          </div>
-        ))}
+        {state.chatHistory &&
+          state.chatHistory.map((chat, index) => (
+            <div
+              key={index}
+              className={`chat-container mt-1 ${
+                chat.sender === "ai" ? "ai" : "user"
+              }`}
+            >
+              {chat.sender === "user" ? (
+                <>
+                  <div className="message">{chat.message}</div>
+                  <div className="avatar">
+                    <img alt="user avatar" src={userAvatar} />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="avatar">
+                    <img
+                      alt="ai avatar"
+                      src={aiAvatar}
+                      style={{ borderRadius: "50%" }}
+                    />
+                  </div>
+                  <div className="message">{chat.message}</div>
+                </>
+              )}
+            </div>
+          ))}
         {isTyping && (
           <>
             <div className="chat-container mt-1 isTyping">
