@@ -4,7 +4,6 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  /* background-color: var(--tertiary-color); */
 }
 .home-section h1 {
   font-family: var(--secondary-font);
@@ -14,10 +13,9 @@
   font-family: var(--secondary-font);
   font-size: 1.2rem;
   text-align: justify;
-  line-height: 1.2rem;
+  line-height: 1.5rem;
 }
-.home-description {
-}
+
 .home-section button {
   width: 200px;
 }

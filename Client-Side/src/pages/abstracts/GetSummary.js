@@ -100,7 +100,7 @@ export default function GetSummary() {
         ) {
           return (
             <div className="d-flex flex-column align-items-center justify-content-center">
-              <p className="text-warning p-3">
+              <p className=" p-2" style={{ color: "var(--quaternary-color)" }}>
                 <Exclamation /> This is a new article, but the content you see
                 is for the previous article. Get the new summary
               </p>
