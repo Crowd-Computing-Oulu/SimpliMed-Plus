@@ -34,7 +34,7 @@ export default function Instructions() {
           </button>
         </NavLink>
       </div>
-      {/* BELOW IS FOR THE USER STUDY */}
+      {/* BELOW IS FOR THE USER STUDY - TO GIVE USERS INSTRUCTION */}
       {/* <ol>
         <li>
           Please check your <b> Prolific username</b> from the top right corner
