@@ -9,7 +9,7 @@ export default function Main() {
 
   return (
     <>
-      <GetSummary setState={setState} tabAbstract={abstract} />
+      <GetSummary />
       {state && !state.isLoading && state.abstractData && (
         <Abstracts abstracts={state.abstractData} />
       )}
