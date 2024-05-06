@@ -4,12 +4,12 @@ import { BoxArrowRight } from "react-bootstrap-icons";
 import { AppContext } from "../App";
 import { NavLink } from "react-router-dom";
 export default function Header() {
-  const { state, handleLogoutChange } = React.useContext(AppContext);
+  const { handleLogoutChange } = React.useContext(AppContext);
   return (
     <div id="header" className="header-container">
       <div className="d-flex flex-row justify-content-between">
         <span className="header-logo">SimpliMed</span>
-        {/* FOR THE USER STUDY  */}
+        {/* FOR THE USER STUDY - TO SHOW THE USER NAME  */}
         {/* <span className="tooltip_1 header-username">
           {state.username}
           <span className="usernameTooltipText">Prolific Username</span>
@@ -22,7 +22,7 @@ export default function Header() {
         </NavLink>
       </div>
 
-      {/* BELOW IS FOR THE USER STUDY   */}
+      {/* BELOW IS FOR THE USER STUDY - TO SHOW THE REMAINING DAILY TASKS FOR FEEDBACKS  */}
       {/* {state.remainingFeedbacks === 0 && (
         <span className="d-block" id="remainingFeedbacks">
           No Remaining Feedbacks
