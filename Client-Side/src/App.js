@@ -21,7 +21,12 @@ import { requireAuth } from "./utils";
 
 export const AppContext = React.createContext();
 function App() {
-  const [wrongPage, setWrongPage] = React.useState(false);
+  const urlStatusOptions = {
+    PUBMED_NO_ABSTRACT: "pubmedNoAbstract",
+    PUBMED_WITH_ABSTRACT: "pubmedWithAbstract",
+    NOT_PUBMED: "notPubmed",
+  };
+  const [urlStatus, setUrlStatus] = React.useState(null);
   const [state, setState] = React.useState(null);
   const [abstract, setAbstract] = React.useState(null);
   // Send a message each time the sidepanel opens
@@ -49,21 +54,30 @@ function App() {
       sendResponse
     ) {
       if (message.action === "Tab Switched") {
-        try {
-          const abstractInfo = await getTabInformation(message.url);
-          setAbstract(abstractInfo);
-          setWrongPage(false);
-        } catch (error) {
-          setWrongPage(true);
+        if (message.url.indexOf("pubmed.ncbi.nlm.nih.gov") > -1) {
+          console.log("user is on pubmed webpage");
+          try {
+            const abstractInfo = await getTabInformation(message.url);
+            setAbstract(abstractInfo);
+            setUrlStatus(urlStatusOptions.PUBMED_WITH_ABSTRACT);
+          } catch (error) {
+            setUrlStatus(urlStatusOptions.PUBMED_NO_ABSTRACT);
+          }
+        } else {
+          setUrlStatus(urlStatusOptions.NOT_PUBMED);
         }
       }
       if (message.action === "URL Changed") {
-        try {
-          const abstractInfo = await getTabInformation(message.url);
-          setAbstract(abstractInfo);
-          setWrongPage(false);
-        } catch (error) {
-          setWrongPage(true);
+        if (message.url.indexOf("pubmed.ncbi.nlm.nih.gov") > -1) {
+          try {
+            const abstractInfo = await getTabInformation(message.url);
+            setAbstract(abstractInfo);
+            setUrlStatus(urlStatusOptions.PUBMED_WITH_ABSTRACT);
+          } catch (error) {
+            setUrlStatus(urlStatusOptions.PUBMED_NO_ABSTRACT);
+          }
+        } else {
+          setUrlStatus(urlStatusOptions.NOT_PUBMED);
         }
       }
     });
@@ -99,12 +113,19 @@ function App() {
         });
         const currentTab = tabs[0];
         // send url to the function and get url, originaltitle and originalabstract
-        const abstractInfo = await getTabInformation(currentTab.url);
-        setWrongPage(false);
-        setAbstract(abstractInfo);
+        if (currentTab.url.indexOf("pubmed.ncbi.nlm.nih.gov") > -1) {
+          try {
+            const abstractInfo = await getTabInformation(currentTab.url);
+            setAbstract(abstractInfo);
+            setUrlStatus(urlStatusOptions.PUBMED_WITH_ABSTRACT);
+          } catch (error) {
+            setUrlStatus(urlStatusOptions.PUBMED_NO_ABSTRACT);
+          }
+        } else {
+          setUrlStatus(urlStatusOptions.NOT_PUBMED);
+        }
       } catch (error) {
         console.error("Error fetching the abstract data from the page:", error);
-        setWrongPage(true);
       }
     };
     fetchTabData();
@@ -180,7 +201,7 @@ function App() {
           setState,
           handleLogoutChange,
           abstract,
-          wrongPage,
+          urlStatus,
         }}
       >
         <RouterProvider

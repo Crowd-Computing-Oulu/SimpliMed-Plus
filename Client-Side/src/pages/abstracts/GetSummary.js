@@ -5,11 +5,7 @@ import { AppContext } from "../../App";
 import { updateState } from "../../utils";
 import { Exclamation } from "react-bootstrap-icons";
 export default function GetSummary() {
-  const { state, setState, abstract, wrongPage } = React.useContext(AppContext);
-  console.log("should be rerendered by swtiching tab");
-  console.log("abstract", abstract);
-  console.log("state", state);
-  console.log("wrongPage", wrongPage);
+  const { state, setState, abstract, urlStatus } = React.useContext(AppContext);
 
   const [error, setError] = React.useState("");
 
@@ -61,19 +57,43 @@ export default function GetSummary() {
 
   function summaryButton() {
     if (!state.isLoading) {
-      if (wrongPage) {
+      // IF THE UESR IS NOT ON PUBMED WEBSITE
+      if (urlStatus === "notPubmed") {
         return (
           <div className="d-flex flex-column align-items-center justify-content-center">
             <p className="px-3">
-              This page doesn't have any abstract content. Please go to the
-              PubMed website and choose an article with an available abstract.
+              This feature only works if you go to PubMed website, and open an
+              article.
             </p>
+            <button
+              className="button getSummaryBtn"
+              onClick={() =>
+                chrome.tabs.create({
+                  url: "https://pubmed.ncbi.nlm.nih.gov/",
+                  active: true,
+                })
+              }
+            >
+              Go to PubMed
+            </button>
+            {/* <button className="button getSummaryBtn disabledBtn">
+              No available abstract
+            </button> */}
+          </div>
+        );
+      }
+      // IF THE UESR IS ON PUBMED WEBSITE BUT NOT ON AN ARTICLE, OR THE ARTICLE DOESNT HAVE AN ABSTRACT BUT
+      else if (urlStatus === "pubmedNoAbstract") {
+        console.log("pubmedNoAbstract");
+        return (
+          <div className="d-flex flex-column align-items-center justify-content-center">
+            <p className="px-3">Open an article with available abstract.</p>
             <button className="button getSummaryBtn disabledBtn">
               No available abstract
             </button>
           </div>
         );
-      } else {
+      } else if (urlStatus === "pubmedWithAbstract") {
         if (error) {
           return (
             <>
@@ -101,8 +121,8 @@ export default function GetSummary() {
           return (
             <div className="d-flex flex-column align-items-center justify-content-center">
               <p className=" p-2" style={{ color: "var(--quaternary-color)" }}>
-                <Exclamation /> This is a new article, but the content you see
-                is for the previous article. Get the new summary
+                This is a new article, but the content you see is for the
+                previous article. Get the new summary
               </p>
               <button className="button getSummaryBtn" onClick={getSummary}>
                 Get Summary
@@ -111,9 +131,15 @@ export default function GetSummary() {
           );
         } else if (!state.abstractData && abstract) {
           return (
-            <button className="button getSummaryBtn" onClick={getSummary}>
-              Get Summary
-            </button>
+            <div className="d-flex flex-column align-items-center justify-content-center">
+              <p className=" p-2" style={{ color: "var(--quaternary-color)" }}>
+                Click on the button to get 2 different summary versions for this
+                abstract.
+              </p>
+              <button className="button getSummaryBtn" onClick={getSummary}>
+                Get Summary
+              </button>
+            </div>
           );
         }
       }
@@ -131,13 +157,7 @@ export default function GetSummary() {
       <div className="getSummary-container flex-grow-0 mt-4">
         <div className="d-flex flex-column align-items-center justify-content-center  ">
           {state &&
-            summaryButton(
-              state.isLoading,
-              error,
-              state.abstractData,
-              abstract,
-              wrongPage
-            )}
+            summaryButton(state.isLoading, error, state.abstractData, abstract)}
         </div>
       </div>
     </>
