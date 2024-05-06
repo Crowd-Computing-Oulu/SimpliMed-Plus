@@ -21,6 +21,7 @@ let state = {
     advancedTime: 0,
     elementaryTime: 0,
   },
+  // chatHistory: []
   // feedback: {
   //   text,
   //   originalDifficulty,
@@ -59,10 +60,19 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 // UPON OPENING THE EXTENSION
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "firstOpen") {
+    console.log("First open message received");
     chrome.storage.local.get(["accessToken", "username"], function (data) {
       if (data.username && data.accessToken) {
         state.username = data.username;
         state.accessToken = data.accessToken;
+        // /Creating the chat history on first open if the token exist
+        state.chatHistory = [
+          {
+            sender: "ai",
+            message:
+              "Ask a medical question and i will find relevant keywords for you.",
+          },
+        ];
         sendResponse({
           response: "TokenExist",
           state: state,
@@ -88,18 +98,27 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         .then(function (accessToken) {
           state.username = message.username;
           state.accessToken = accessToken;
+          // /Creating the chat history on first open if the token doesnt exist and user logs in
+
+          state.chatHistory = [
+            {
+              sender: "ai",
+              message:
+                "Ask a medical question and i will find relevant keywords for you.",
+            },
+          ];
           return setChromeStorage();
         })
         .then(function () {
           // this funciton will send a message and the state to the login request
-          console.log("Access Token saved in the storage successfully!");
+          // console.log("Access Token saved in the storage successfully!");
           sendResponse({
             response: "Login Successful",
             state: state,
           });
         })
         .catch(function (error) {
-          console.error("Login failed:", error);
+          // console.error("Login failed:", error);
           sendResponse({
             response: "Login Failed",
           });
@@ -151,7 +170,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           state.isLoading = false;
           state.abstractData = result.abstract;
           state.feedback = result.feedback;
-          console.log("state in background", state);
+          // console.log("state in background", state);
           if (!state.feedback) {
             state.feedback = {
               originalTime: 0,
@@ -169,7 +188,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           });
         })
         .catch((err) => {
-          console.log("Error", err);
+          // console.log("Error", err);
           state.isLoading = false;
           sendResponse({
             response: "Error",
@@ -188,14 +207,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "requestKeywords") {
     requestKeywords(message.initialQuestion)
       .then((result) => {
-        console.log(result);
+        // console.log(result);
         sendResponse({
           response: "Ai response",
           aiResponse: result,
         });
       })
       .catch((error) => {
-        console.log("Error in workerjs", error);
+        // console.log("Error in workerjs", error);
         sendResponse({
           error: "Error",
           message: error.message,
@@ -287,7 +306,7 @@ async function requestSummary(abstractInfromation) {
         }
         // console.log("this is responseData", responseData);
       } catch (error) {
-        console.log("fetching will be rejected", error);
+        // console.log("fetching will be rejected", error);
         reject(error);
       }
     });
@@ -373,14 +392,10 @@ async function requestKeywords(initialQuestion) {
         let responseData = await response.json();
         if (response.status == 200) {
           let result = {};
-          console.log(responseData);
+          // console.log(responseData);
           result.suggestedKeywords = responseData.suggestion.suggestedKeywords;
-          console.log(
-            "it should be an arrayaaaaaaaaaaaaaaaaaaaaaaaaa",
-            result.suggestedKeywords
-          );
           result.message = responseData.message;
-          console.log("this is the messsssssssssssssage", result.message);
+          // console.log("this is the message", result.message);
           resolve(result);
         } else {
           reject({ message: responseData.message });
