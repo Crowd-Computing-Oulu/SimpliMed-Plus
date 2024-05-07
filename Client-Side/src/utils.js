@@ -1,7 +1,5 @@
 /*global chrome*/
 // TO GET THE TAB INFORMATION SUCH AS URL AND TEXT
-import { redirect } from "react-router-dom";
-
 export async function getTabInformation(url) {
   const response = await fetch(url);
   const text = await response.text();
