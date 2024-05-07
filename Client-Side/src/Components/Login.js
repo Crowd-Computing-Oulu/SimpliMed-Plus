@@ -35,7 +35,7 @@ export default function Login() {
   };
   return (
     <div className="login-container" id="login-container">
-      <h2 className="mt-5">Sign in with your Prolific username</h2>
+      <h2 className="mt-5">Sign in with your username</h2>
       <Form
         method="post"
         className="mt-5 form"
@@ -46,7 +46,7 @@ export default function Login() {
           type="username"
           id="username"
           name="username"
-          placeholder="Your Prolific Username"
+          placeholder="Your Username"
           required
         />
         {/* Passing the new username to the app component  */}
