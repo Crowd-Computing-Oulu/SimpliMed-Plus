@@ -37,7 +37,6 @@ let state = {
 chrome.tabs.onActivated.addListener(function (activeInfo) {
   chrome.tabs.get(activeInfo.tabId, function (tab) {
     // Access the tab URL
-    // console.log("Tab switched:", tab.url);
     // send a message to sidepanel for tab switch with the url
     chrome.runtime.sendMessage({
       action: "Tab Switched",
@@ -49,7 +48,6 @@ chrome.tabs.onActivated.addListener(function (activeInfo) {
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   // Check if the URL has changed
   if (changeInfo.url) {
-    // console.log("URL changed:", changeInfo.url);
     // Send a message to the side panel for the URL change
     chrome.runtime.sendMessage({
       action: "URL Changed",
@@ -60,7 +58,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 // UPON OPENING THE EXTENSION
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "firstOpen") {
-    console.log("First open message received");
+    // console.log("First open message received");
     chrome.storage.local.get(["accessToken", "username"], function (data) {
       if (data.username && data.accessToken) {
         state.username = data.username;
@@ -70,7 +68,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           {
             sender: "ai",
             message:
-              "Ask a medical question and i will find relevant keywords for you.",
+              "Ask a medical question and I will find relevant keywords for you.",
           },
         ];
         sendResponse({
@@ -224,6 +222,27 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // To indicate that sendResponse will be called asynchronously
     return true;
   }
+  // if (message.action === "scrollToSimilarArticles") {
+  //   console.log("scroll to similar articles in service worker", chrome.tabs);
+  //   function scrollToH2Element() {
+  //     console.log("scrolling to h2 element");
+  //     const h2Element = document.querySelector("h2");
+  //     if (h2Element) {
+  //       h2Element.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  //     }
+  //   }
+  //   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+  //     // tabs is an array of tabs matching the query
+  //     var activeTab = tabs[0];
+  //     console.log("activeTab", activeTab);
+  //     var tabId = activeTab.id;
+  //     console.log(tabId);
+  //     chrome.scripting.executeScript({
+  //       target: { tabId: tabId },
+  //       function: scrollToH2Element(),
+  //     });
+  //   });
+  // }
 });
 
 // FUNCTIONS
@@ -293,7 +312,6 @@ async function requestSummary(abstractInfromation) {
           options
         );
         let responseData = await response.json();
-        // console.log("this is response", responseData);
         if (response.status == 200) {
           let result = {};
           // adding the interactionId in abstractData
