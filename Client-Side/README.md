@@ -1,70 +1,82 @@
-# Getting Started with Create React App
+# SimpliMed
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Description
 
-## Available Scripts
+**SimpliMed Plus** is a React-Based Chrome browser extension powered by the GPT-4 model. It's designed to streamline the reading of academic articles on the PubMed domain. The extension is a sidepanel and doesnt change the DOM elements of the page. It contains of 3 different section. In the first one, the users can ask medical quesitons to an AI agent and recieve keywords suggestions. Then the user can find the articles and by using the Get Summary button they can request for simplified versions.SimpliMed simplifies article abstracts into two distinct versions: elementary and advanced. The elementary version provides a simplified summary of the content, while the advanced version offers a more detailed overview. Also the original articles has a new feature where it highlight the 10 most difficult terms and show the meaning either from wikipedia or gpt itself.
+The articles, simplified versions, user questions will be saved on the database, meaning that if the user request for a simplified version of an abstract, they no longer can send request for this abstract and only see the previous results.
 
-In the project directory, you can run:
+## Installation Guide
 
-### `npm start`
+To use SimpliMed, follow these installation steps:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. **Download the Project:**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+   - Download the entire project and unzip it.
 
-### `npm test`
+2. **Server-Side Setup:**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   - Navigate to the server-side folder and install the required dependencies using npm:
 
-### `npm run build`
+     `npm install`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   - To start the server run
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+     `npm run start`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **Create a .env File:**
 
-### `npm run eject`
+   - In the Server-Side folder, create a `.env` file.
+   - Add your OpenAI API token to this file as follows:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+     `OPENAI_TOKEN = 'YOUR_API_TOKEN'`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4. **Client-Side Configuration for Development:**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   - Navigate to the client-side folder and install the required dependencies using npm:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+     `npm install`
 
-## Learn More
+   - In the Client-Side folder, open the "service-worker" file.
+   - If you're running the project on another server, adjust the server address accordingly (it is now set on localhost).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+5. **Set Up MongoDB:**
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   - You'll need a MongoDB database to store data.
+   - Create a database named "abstracts" with 5 collections for "abstracts," "users," "interactions, suggestions" and "feedbacks."
 
-### Code Splitting
+6. **Start the Development:**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+   - To start the development mode run the following command in the Client-side folder:
 
-### Analyzing the Bundle Size
+     `npm run dev`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+   - This command will creat a dist folder in the root folder.
 
-### Making a Progressive Web App
+7. **instal the plugin extension on chrome:**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+   - Go to chrome
+   - Open the setting
+   - from left menu open extensions
+   - enable developers mode (top right)
+   - click on "load unpacked"
+   - find the folder that contains the extension files (dist) and click open
+   - The extension should have been added to your chrome.
 
-### Advanced Configuration
+8. **Important Note:**
+   - If the plugin isn't working correctly, access the "studyStatus.json" file.
+   - Update the dates to reflect the current date and the following days for each phrase.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+That's it! The SimpliMed extension should now be up and running.
 
-### Deployment
+##Some Technical Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+1. The front end is React and the backend is express.js/node.js. MongoDB is used for the database.
+2. You can login with any username now, it will be saved in the db. no signing in is required.
+3. Each time a user login a token will be created and saved in the chrome local storage. This user token will be saved in the browser for 10days. It is required for using the API's. if the plugin doesnt work, logout and login again.
+4. Make sure to always keep the "studyStatus.json" file up to date
+5. The "service-worker" file will run in the background, even if the sidepanel window is closed. (It stores a state object, important for the user study)
+6. The "app.js" file is responsible for everything that happens on the popup window.
 
-### `npm run build` fails to minify
+7. Back and Front javascript files communicated with each other through a port and they send messages and objects to each other when some events happen.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+8. Prompts can be found in "abstract.controller.js" file. When the "Get Abstract" button is clicked, the page title and abstract will be sent to the gpt-model with these prompts. 4 different prompts are used here.
