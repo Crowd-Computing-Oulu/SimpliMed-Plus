@@ -125,7 +125,7 @@ export default function AiAgent() {
           state.chatHistory.map((chat, index) => (
             <div
               key={index}
-              className={`chat-container mt-1 ${
+              className={`chat-container mt-2 ${
                 chat.sender === "ai" ? "ai" : "user"
               }`}
             >
@@ -152,7 +152,7 @@ export default function AiAgent() {
           ))}
         {isTyping && (
           <>
-            <div className="chat-container mt-1 isTyping">
+            <div className="chat-container mt-2 isTyping">
               <div className="avatar">
                 <img
                   alt="ai avatar"
