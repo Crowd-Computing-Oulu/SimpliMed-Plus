@@ -1,5 +1,9 @@
 # SimpliMed
 
+## Project Demo
+https://github.com/Nawzneen/SimpliMed-Plus/assets/86608888/2ed1e19c-6f45-42de-ab8f-dbb4fc5bd678
+
+
 ## Project Description
 
 **SimpliMed Plus** is a React-Based Chrome browser extension powered by the GPT-4 model. It's designed to streamline the reading of academic articles on the PubMed domain. The extension is a sidepanel and doesnt change the DOM elements of the page. It contains of 3 different section. In the first one, the users can ask medical quesitons to an AI agent and recieve keywords suggestions. Then the user can find the articles and by using the Get Summary button they can request for simplified versions.SimpliMed simplifies article abstracts into two distinct versions: elementary and advanced. The elementary version provides a simplified summary of the content, while the advanced version offers a more detailed overview. Also the original articles has a new feature where it highlight the 10 most difficult terms and show the meaning either from wikipedia or gpt itself.
