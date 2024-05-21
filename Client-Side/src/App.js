@@ -21,6 +21,25 @@ import { requireAuth } from "./utils";
 
 export const AppContext = React.createContext();
 function App() {
+  const [panelHeight, setPanelHeight] = React.useState(window.innerHeight);
+
+  const adjustPanelHeight = () => {
+    setPanelHeight(window.innerHeight);
+  };
+
+  React.useEffect(() => {
+    // Set the initial height
+    adjustPanelHeight();
+
+    // Adjust the height when the window is resized
+    window.addEventListener("resize", adjustPanelHeight);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", adjustPanelHeight);
+    };
+  }, []);
+
   const urlStatusOptions = {
     PUBMED_NO_ABSTRACT: "pubmedNoAbstract",
     PUBMED_WITH_ABSTRACT: "pubmedWithAbstract",
@@ -34,7 +53,7 @@ function App() {
     new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
         if (response.response === "TokenExist") {
-          console.log("Token exist");
+          console.log("Token exist this is response state, ", response.state);
           updateState(setState, response.state);
           resolve(redirect("/"));
         } else {
@@ -194,7 +213,7 @@ function App() {
     }
   );
   return (
-    <div className="App">
+    <div className="App" style={{ height: `${panelHeight}px` }}>
       <AppContext.Provider
         value={{
           state,
