@@ -6,7 +6,6 @@ let state = {
   // accessToken: "",
   isLoading: false,
   difficultyLevel: 0,
-  instructionShown: false,
   // abstractData: {
   //   interactionId: "test",
   //   url: "test",
@@ -21,7 +20,13 @@ let state = {
     advancedTime: 0,
     elementaryTime: 0,
   },
-  // chatHistory: []
+  chatHistory: [
+    {
+      sender: "ai",
+      message:
+        "Ask a medical question and I will find relevant keywords for you.",
+    },
+  ],
   // feedback: {
   //   text,
   //   originalDifficulty,
@@ -63,14 +68,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       if (data.username && data.accessToken) {
         state.username = data.username;
         state.accessToken = data.accessToken;
-        // /Creating the chat history on first open if the token exist
-        state.chatHistory = [
-          {
-            sender: "ai",
-            message:
-              "Ask a medical question and I will find relevant keywords for you.",
-          },
-        ];
         sendResponse({
           response: "TokenExist",
           state: state,
@@ -91,30 +88,26 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 
   if (message.action === "loginRequest") {
+    console.log("state in background upon login", state);
+
     if (message.username) {
       requestLogin(message.username)
         .then(function (accessToken) {
           state.username = message.username;
           state.accessToken = accessToken;
-          // /Creating the chat history on first open if the token doesnt exist and user logs in
+          // SAVING TOKEN IN CHROME STORAGE
 
-          state.chatHistory = [
-            {
-              sender: "ai",
-              message:
-                "Ask a medical question and i will find relevant keywords for you.",
-            },
-          ];
-          return setChromeStorage();
-        })
-        .then(function () {
-          // this funciton will send a message and the state to the login request
-          // console.log("Access Token saved in the storage successfully!");
+          chrome.storage.local.set({
+            accessToken: state.accessToken,
+            username: state.username,
+          });
+
           sendResponse({
             response: "Login Successful",
             state: state,
           });
         })
+
         .catch(function (error) {
           // console.error("Login failed:", error);
           sendResponse({
@@ -150,6 +143,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // To indicate that sendResponse will be called asynchronously
     return true;
   }
+  // if (message.action === "updateChatHistory") {
+  //   state.chatHistory = message.chatHistory;
+  //   console.log("MESSAGE chat history", message.chatHistory);
+  //   console.log("UPDATED CHAT HISTORY in service worker", state.chatHistory);
+  // }
   if (message.action === "summaryRequest") {
     // console.log("new summary has been requested");
     if (state.accessToken) {
@@ -162,13 +160,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       // The new state will be updated in sidepanel to have the loading component
       chrome.runtime.sendMessage({ action: "updateState", state });
 
-      // try {
       requestSummary(message.tabAbstract)
         .then((result) => {
           state.isLoading = false;
           state.abstractData = result.abstract;
           state.feedback = result.feedback;
-          // console.log("state in background", state);
           if (!state.feedback) {
             state.feedback = {
               originalTime: 0,
@@ -180,6 +176,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             state.feedback.message =
               "You have already read this article and submitted your answers. If there are remaining daily submissions, choose another article!";
           }
+          // UPDATING THE STATE IN THE SIDEPANEL - DATA CONTAINS ABSTRACTS AND FEEDBACKS IF AVAILABLE
           sendResponse({
             response: "Successful",
             state: state,
@@ -194,10 +191,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             state: state,
           });
         });
-      // } catch (error) {
-      //   // the esndresponse here wont work!
-      //   console.log("What error Error", error);
-      // }
     }
     // To indicate that sendResponse will be called asynchronously
     return true;
@@ -222,27 +215,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // To indicate that sendResponse will be called asynchronously
     return true;
   }
-  // if (message.action === "scrollToSimilarArticles") {
-  //   console.log("scroll to similar articles in service worker", chrome.tabs);
-  //   function scrollToH2Element() {
-  //     console.log("scrolling to h2 element");
-  //     const h2Element = document.querySelector("h2");
-  //     if (h2Element) {
-  //       h2Element.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  //     }
-  //   }
-  //   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-  //     // tabs is an array of tabs matching the query
-  //     var activeTab = tabs[0];
-  //     console.log("activeTab", activeTab);
-  //     var tabId = activeTab.id;
-  //     console.log(tabId);
-  //     chrome.scripting.executeScript({
-  //       target: { tabId: tabId },
-  //       function: scrollToH2Element(),
-  //     });
-  //   });
-  // }
 });
 
 // FUNCTIONS
@@ -331,7 +303,8 @@ async function requestSummary(abstractInfromation) {
   });
 }
 
-// UPDATE STUDY STATUS WITH EVERYCHANGE
+// UPDATE STUDY STATUS WITH EVERY CHANGE
+// FOR THE USER STUDY
 async function updateStudyStatus() {
   // to check the daily phrase and the remainin daily feedbacks
   let studyStatus = await requestStudyStatus();
