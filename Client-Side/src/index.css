@@ -1,3 +1,9 @@
+* {
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -7,6 +13,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /* min-width: 400px;
   min-height: 600px; */
+  min-width: 350px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  /* position: sticky;
+  top: 0; */
 }
 
 code {

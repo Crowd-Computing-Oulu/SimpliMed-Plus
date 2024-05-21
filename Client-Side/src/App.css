@@ -20,20 +20,6 @@
   --secondary-font: "Kanit", sans-serif;
 }
 
-body {
-  max-height: fit-content;
-  min-width: 350px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  position: sticky;
-  top: 0;
-}
-* {
-  border: 0;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
 .hidden {
   display: none !important;
 }

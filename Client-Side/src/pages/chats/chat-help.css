@@ -1,20 +1,29 @@
 /* to set the position of the elements  */
 .aiagent-container {
-  position: relative;
   display: flex;
-  flex-direction: column;
-  height: 80vh;
-  /* flex-shrink: 1; */
-}
-.chatbox {
   flex-grow: 1;
+  flex-direction: column;
+  height: 100vh;
   overflow-y: auto;
 }
-.input-container {
-  flex-grow: 0;
-  height: fit-content;
+.chatbox {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  /* max-height: 70%; */
 }
-
+.input-container {
+  height: fit-content;
+  flex-shrink: 0;
+  background-color: white;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  padding-top: 1rem;
+  box-shadow: 0px -5px 14px -6px rgba(136, 173, 181, 1);
+}
 .aiagent-container a {
   text-decoration: none;
   color: white;
@@ -70,24 +79,10 @@
 /* input elements  */
 /* Fixed to the bottom of the page  */
 
-.input-container {
-  background-color: white;
-  width: 100%;
-  margin: auto;
-  /* position: absolute;
-  bottom: 0; */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 1rem;
-  padding-top: 1rem;
-  box-shadow: 0px -5px 14px -6px rgba(136, 173, 181, 1);
-}
-
 .input-container textarea[type="text"] {
   width: 90%;
   flex: 1;
+  box-sizing: border-box;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
