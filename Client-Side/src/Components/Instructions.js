@@ -26,11 +26,11 @@ export default function Instructions() {
           <button
             className="btn fw-bold mt-2"
             style={{
-              backgroundColor: "var(--quaternary-color)",
+              backgroundColor: "var(--secondary-color)",
               color: "white",
             }}
           >
-            Go To Chat!
+            Go To Chat
           </button>
         </NavLink>
       </div>

@@ -1,6 +1,6 @@
 /*global chrome*/
 import React from "react";
-import "./aiagent.css";
+import "./chat-help.css";
 import { NavLink } from "react-router-dom";
 import aiAvatar from "../../../public/images/ai-avatar.jpg";
 
@@ -56,7 +56,7 @@ export default function Help() {
   };
 
   return (
-    <div className="aiagent aiagent-container mt-3 ">
+    <div className="aiagent aiagent-container pt-3 ">
       <div className="chatbox">
         <div className="chat-container mt-2 ai">
           <div className="avatar">

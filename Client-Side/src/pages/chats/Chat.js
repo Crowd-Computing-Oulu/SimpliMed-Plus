@@ -1,6 +1,6 @@
 /*global chrome*/
 import React from "react";
-import "./aiagent.css";
+import "./chat-help.css";
 // import icon
 import { ArrowUpRight } from "react-bootstrap-icons";
 import userAvatar from "../../../public/images/user-avatar.jpg";

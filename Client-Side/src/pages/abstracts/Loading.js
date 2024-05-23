@@ -14,12 +14,12 @@ export default function Loading() {
         >
           <defs>
             <linearGradient id="pl-grad1" x1="1" y1="0.5" x2="0" y2="0.5">
-              <stop offset="0%" stopColor="hsl(187,76.5%,50%)" />
-              <stop offset="100%" stopColor="hsl(7,76.5%,50%)" />
+              <stop offset="0%" stopColor="rgb(61, 138, 164)" />
+              <stop offset="100%" stopColor="rgb(84, 56, 132)" />
             </linearGradient>
             <linearGradient id="pl-grad2" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(187,76.5%,50%)" />
-              <stop offset="100%" stopColor="hsl(7,76.5%,50%)" />
+              <stop offset="0%" stopColor="rgb(61, 138, 164)" />
+              <stop offset="100%" stopColor="rgb(84, 56, 132)" />
             </linearGradient>
           </defs>
           <circle
