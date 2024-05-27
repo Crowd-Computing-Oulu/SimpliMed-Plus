@@ -12,9 +12,7 @@ export async function action({ request }, setState) {
     chrome.runtime.sendMessage(
       { action: "loginRequest", username },
       (response) => {
-        console.log("response is", response);
         if (response.response === "Login Successful") {
-          console.log("token exist");
           updateState(setState, response.state);
           resolve(redirect("/"));
         } else {
@@ -53,7 +51,6 @@ export default function Login() {
         <button
           className="mt-2 p-2"
           style={navigation.state === "submitting" ? btnSubmitting : null}
-          // disbaled={navigation.state === "submitting"}
         >
           {navigation.state === "submitting" ? "Logging In..." : "Log in"}
         </button>
