@@ -5,6 +5,7 @@ import Header from "./Header";
 import Instructions from "./Instructions";
 import { AppContext } from "../App";
 import "./layout.css";
+import Loading from "../pages/abstracts/Loading";
 import homeBG from "../../public/images/Home-Background2.png";
 export default function Layout() {
   const { state } = React.useContext(AppContext);
@@ -12,6 +13,7 @@ export default function Layout() {
   const layoutElement = () => {
     if (state) {
       return (
+        // If user is logged in, show this page
         <>
           <Header />
           <Navigation />
@@ -21,14 +23,15 @@ export default function Layout() {
       );
     } else {
       return (
+        // If user is not logged in, show this page
         <>
           <div className="home-section p-3 ">
             <h1>Welcome to SimpliMed!</h1>
             <div className="home-description mt-3">
               <p className="">
                 It seems like you are not logged in, Please provide your OpenAi
-                Token!
-                <span> The token will be saved on your own computer!</span>
+                Token.
+                <span> The token will be saved on your own computer.</span>
               </p>
             </div>
             <img alt="heart and books" src={homeBG} />
