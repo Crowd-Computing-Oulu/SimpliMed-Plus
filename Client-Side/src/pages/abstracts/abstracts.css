@@ -20,6 +20,7 @@ div.main-content {
   padding: 0 5%;
   text-align: justify;
   width: 100%;
+  overflow-y: auto;
 }
 #difficulty-lvl {
   display: flex;
