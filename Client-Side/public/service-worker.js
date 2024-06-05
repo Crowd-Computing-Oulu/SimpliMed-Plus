@@ -1,3 +1,4 @@
+import { requestSummaryy, requestKeywords } from "./backend-utils.js";
 /*global chrome*/
 
 // Allows users to open the side panel by clicking on the action toolbar icon
@@ -7,6 +8,7 @@ chrome.sidePanel
 
 // -------------------------
 // A state should have these values overall
+
 let state = {
   // accessToken: "",
   isLoading: false,
@@ -68,11 +70,10 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 // UPON OPENING THE EXTENSION
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "firstOpen") {
-    // console.log("First open message received");
-    chrome.storage.local.get(["accessToken", "username"], function (data) {
-      if (data.username && data.accessToken) {
-        state.username = data.username;
-        state.accessToken = data.accessToken;
+    chrome.storage.local.get(["openAIKey"], function (data) {
+      if (data.openAIKey) {
+        state.openAIKey = data.openAIKey;
+        // state.accessToken = data.accessToken;
         sendResponse({
           response: "TokenExist",
           state: state,
@@ -93,30 +94,28 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 
   if (message.action === "loginRequest") {
-    console.log("state in background upon login", state);
+    // this function will verify the token user has entered
 
-    if (message.username) {
-      requestLogin(message.username)
-        .then(function (accessToken) {
-          state.username = message.username;
-          state.accessToken = accessToken;
+    if (message.openAIKey) {
+      verifyToken(message.openAIKey)
+        .then(function (result) {
+          state.openAIKey = message.openAIKey;
           // SAVING TOKEN IN CHROME STORAGE
-
           chrome.storage.local.set({
-            accessToken: state.accessToken,
-            username: state.username,
+            openAIKey: state.openAIKey,
           });
-
+          console.log("state in login request", state);
           sendResponse({
             response: "Login Successful",
             state: state,
           });
         })
-
         .catch(function (error) {
-          // console.error("Login failed:", error);
+          // error contains the status code here
+          console.error("Login failed:", error);
           sendResponse({
-            response: "Login Failed",
+            errorMessage: error.message,
+            errorStatus: error.status,
           });
         });
     }
@@ -135,6 +134,13 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             elementaryTime: 0,
             onBoardingQuestionnaire: {},
           },
+          chatHistory: [
+            {
+              sender: "ai",
+              message:
+                "Ask a medical question and I will find relevant keywords for you.",
+            },
+          ],
         };
         sendResponse({
           response: "Logout Successfull",
@@ -148,14 +154,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // To indicate that sendResponse will be called asynchronously
     return true;
   }
-  // if (message.action === "updateChatHistory") {
-  //   state.chatHistory = message.chatHistory;
-  //   console.log("MESSAGE chat history", message.chatHistory);
-  //   console.log("UPDATED CHAT HISTORY in service worker", state.chatHistory);
-  // }
+
   if (message.action === "summaryRequest") {
-    // console.log("new summary has been requested");
-    if (state.accessToken) {
+    if (state.openAIKey) {
       // All the information from the previous abstract will be deleted from the state
       delete state.abstractData;
       delete state.feedback;
@@ -165,55 +166,46 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       // The new state will be updated in sidepanel to have the loading component
       chrome.runtime.sendMessage({ action: "updateState", state });
 
-      requestSummary(message.tabAbstract)
+      const { url, originalTitle, originalAbstract } = message.tabAbstract;
+      const body = {
+        originalAbstract: originalAbstract,
+        originalTitle: originalTitle,
+        url: url,
+        accessToken: state.accessToken,
+      };
+      requestSummaryy({ body: body })
         .then((result) => {
+          state.abstractData = {};
+          state.abstractData.originalAbstract = originalAbstract;
+          state.abstractData.advancedAbstract = result.advancedAbstract;
+          state.abstractData.elementaryAbstract = result.elementaryAbstract;
+          state.abstractData.summerizedTitle = result.summerizedTitle;
+          state.abstractData.hardWords = result.hardWords;
+          state.abstractData.originalTitle = originalTitle;
           state.isLoading = false;
-          state.abstractData = result.abstract;
-          state.feedback = result.feedback;
-          if (!state.feedback) {
-            state.feedback = {
-              originalTime: 0,
-              advancedTime: 0,
-              elementaryTime: 0,
-            };
-          } else {
-            state.feedback.status = "sent";
-            state.feedback.message =
-              "You have already read this article and submitted your answers. If there are remaining daily submissions, choose another article!";
-          }
-          // UPDATING THE STATE IN THE SIDEPANEL - DATA CONTAINS ABSTRACTS AND FEEDBACKS IF AVAILABLE
-          sendResponse({
-            response: "Successful",
-            state: state,
-          });
+          chrome.runtime.sendMessage({ action: "updateState", state });
         })
-        .catch((err) => {
-          // console.log("Error", err);
-          state.isLoading = false;
-          sendResponse({
-            response: "Error",
-            error: err,
-            state: state,
-          });
-        });
+        .catch((error) => {});
     }
     // To indicate that sendResponse will be called asynchronously
     return true;
   }
   if (message.action === "requestKeywords") {
-    requestKeywords(message.initialQuestion)
+    const body = {
+      medicalQuestion: message.medicalQuestion,
+    };
+    requestKeywords({ body: body })
       .then((result) => {
-        // console.log(result);
         sendResponse({
           response: "Ai response",
-          aiResponse: result,
+          suggestedKeywords: result,
         });
       })
       .catch((error) => {
-        // console.log("Error in workerjs", error);
         sendResponse({
           error: "Error",
-          message: error.message,
+          errorMessage: error.message,
+          errorStatus: error.status,
         });
         // console.error("Submit user initial question failed:", error);
       });
@@ -299,9 +291,7 @@ async function requestSummary(abstractInfromation) {
         } else {
           reject({ message: responseData.message });
         }
-        // console.log("this is responseData", responseData);
       } catch (error) {
-        // console.log("fetching will be rejected", error);
         reject(error);
       }
     });
@@ -325,80 +315,50 @@ async function updateStudyStatus() {
 // CLEAR ACCESSTOKEN FROM THE STORAGE
 async function clearChromeStorage() {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.remove(["username", "accessToken"], function () {
+    chrome.storage.local.remove(["openAIKey"], function () {
       resolve();
     });
   });
 }
 
-// SET ACCESS TOKEN IN THE STORAGE
-async function setChromeStorage() {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.set(
-      { accessToken: state.accessToken, username: state.username },
-      async function () {
-        await updateStudyStatus();
-        resolve();
-      }
-    );
-  });
-}
-
 // REQUEST LOGIN
-async function requestLogin(username) {
-  let accessToken = "";
-  const options = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username }),
-  };
+async function verifyToken(openAIKey) {
   try {
-    var response = await fetch(`http://localhost:8080/users/login`, options);
-    response = await response.json();
-    accessToken = response.accessToken;
-  } catch (error) {
-    console.error("Submitting username in the database failed", error);
-  }
-  return accessToken;
-}
-
-// REQUEST USER QUESTION FROM THE AI
-async function requestKeywords(initialQuestion) {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.get("accessToken", async function (data) {
-      const accessToken = data.accessToken;
-      const options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "JWT " + accessToken,
-        },
-        body: JSON.stringify({
-          initialQuestion: initialQuestion,
-        }),
-      };
-
-      try {
-        const response = await fetch(
-          `http://localhost:8080/users/suggestions`,
-          options
-        );
-        let responseData = await response.json();
-        if (response.status == 200) {
-          let result = {};
-          // console.log(responseData);
-          result.suggestedKeywords = responseData.suggestion.suggestedKeywords;
-          result.message = responseData.message;
-          // console.log("this is the message", result.message);
-          resolve(result);
-        } else {
-          reject({ message: responseData.message });
-        }
-      } catch (error) {
-        reject(error);
-      }
+    const response = await fetch("https://api.openai.com/v1/models", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${openAIKey}`,
+      },
     });
-  });
+    if (response.status !== 200) {
+      if (response.status === 401) {
+        const error = new Error("Invalid API key. Please try again.");
+        error.status = `${response.status}`;
+        throw error;
+      } else if (response.status === 403) {
+        const error = new Error("Country, region, or territory not supported.");
+        error.status = response.status;
+        throw error;
+      } else if (response.status === 429) {
+        const error = new Error("Rate limit reached for requests.");
+        error.status = response.status;
+        throw error;
+      } else if (response.status === 500 || response.status === 503) {
+        const error = new Error(
+          "The server had an error while processing your request, try again."
+        );
+        error.status = response.status;
+        throw error;
+      } else {
+        const error = new Error("Invalid API key. Please try again.");
+        error.status = response.status;
+        throw error;
+      }
+    }
+    return openAIKey;
+  } catch (error) {
+    // error contains the status code here
+    throw error;
+  }
 }

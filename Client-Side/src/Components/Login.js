@@ -20,10 +20,6 @@ export async function action({ request }, setState) {
       (response) => {
         if (response.response === "Login Successful") {
           updateState(setState, response.state);
-          console.log(
-            "response from  background  IN LOGIN is",
-            response.response
-          );
           resolve(redirect("/"));
         } else {
           console.log(
@@ -34,7 +30,6 @@ export async function action({ request }, setState) {
           resolve(
             json({ error: response.errorMessage, status: response.errorStatus })
           );
-          // reject("unsuccessful login");
         }
       }
     );
