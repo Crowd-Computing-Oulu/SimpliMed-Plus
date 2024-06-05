@@ -171,7 +171,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         originalAbstract: originalAbstract,
         originalTitle: originalTitle,
         url: url,
-        accessToken: state.accessToken,
+        OPENAI_TOKEN: state.openAIKey,
       };
       requestSummaryy({ body: body })
         .then((result) => {
@@ -193,6 +193,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "requestKeywords") {
     const body = {
       medicalQuestion: message.medicalQuestion,
+      OPENAI_TOKEN: state.openAIKey,
     };
     requestKeywords({ body: body })
       .then((result) => {
