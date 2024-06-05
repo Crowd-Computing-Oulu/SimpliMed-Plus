@@ -24,7 +24,7 @@
   font-family: var(--secondary-font);
 }
 
-#login-container .form input[type="username"],
+#login-container .form input[type="openAIKey"],
 #login-container .form input[type="password"] {
   width: 100%;
   padding: 10px;
