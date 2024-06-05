@@ -11,65 +11,49 @@ import { AppContext } from "../../App";
 export default function AiAgent() {
   const [isTyping, setIsTyping] = React.useState(false);
   const textareaRef = React.useRef(null);
-  const [initialQuestion, setInitialQuestion] = React.useState("");
+  const [medicalQuestion, setMedicalQuestion] = React.useState("");
   const { state, setState } = React.useContext(AppContext);
-  console.log("state in the chat component,", state);
-  console.log("state.chathistory in the chat component,", state.chatHistory);
-  // const [chatHistory, setChatHistory] = React.useState([
-  //   {
-  //     sender: "ai",
-  //     message:
-  //       "Aks a medical question and i will find relevant keywords for you!",
-  //   },
-  // ]);
-  // React.useEffect(() => {
-  //   // Perform some setup actions
-  //   if (!state.chatHistory) {
-  //     console.log("Will create a chat History");
-  //     setState((prevState) => ({ ...prevState, chatHistory: chatHistory }));
-  //   }
-  //   console.log("This code will run everytim to update the chathistory");
-  //   setState((prevState) => ({
-  //     ...prevState,
-  //     chatHistory: chatHistory,
-  //   }));
-  //   console.log("chathistory", state.chatHistory);
-  // }, [chatHistory]); // The empty array ensures this effect runs once on mount and once on unmount
 
   function submitUserQuestion() {
     const newUserChat = {
       sender: "user",
-      message: initialQuestion,
+      message: medicalQuestion,
     };
     setState((prevState) => ({
       ...prevState,
       chatHistory: [...prevState.chatHistory, newUserChat],
     }));
-    // setChatHistory((prevChatHistory) => [...prevChatHistory, newUserChat]);
     setIsTyping(true);
     chrome.runtime.sendMessage(
       {
         action: "requestKeywords",
-        initialQuestion,
+        medicalQuestion,
       },
       function (response) {
-        // console.log("ai response in front", response.aiResponse);
         // Split suggestedKeywords into an array of lines
         if (response.error) {
-          const newAiChat = {
-            sender: "ai",
-            message: (
-              <span>I can only provide keywords in the medical domain!</span>
-            ),
-          };
+          let newAiChat;
+          if (response.errorStatus == 400) {
+            newAiChat = {
+              sender: "ai",
+              message: (
+                <span>I can only provide keywords in the medical domain.</span>
+              ),
+            };
+          } else {
+            newAiChat = {
+              sender: "ai",
+              message: <span>Server error, please try again.</span>,
+            };
+          }
+
           setIsTyping(false);
-          // setChatHistory((prevChatHistory) => [...prevChatHistory, newAiChat]);
           setState((prevState) => ({
             ...prevState,
             chatHistory: [...prevState.chatHistory, newAiChat],
           }));
         } else {
-          const suggestedKeywordsArray = response.aiResponse.suggestedKeywords;
+          const suggestedKeywordsArray = response.suggestedKeywords;
           // Create a new chat message for each line
           const newAiChats = suggestedKeywordsArray.map((keyword) => {
             const searchQuery = keyword
@@ -88,7 +72,6 @@ export default function AiAgent() {
           });
           setIsTyping(false);
           newAiChats.forEach((newChat) => {
-            // setChatHistory((prevChatHistory) => [...prevChatHistory, newChat]);
             setState((prevState) => ({
               ...prevState,
               chatHistory: [...prevState.chatHistory, newChat],
@@ -99,7 +82,7 @@ export default function AiAgent() {
     );
     // clear input field
     textareaRef.current.value = "";
-    setInitialQuestion("");
+    setMedicalQuestion("");
   }
   function handleKeyDown(event) {
     if (event.key === "Enter") {
@@ -110,13 +93,7 @@ export default function AiAgent() {
   function changePath(url) {
     chrome.tabs.create({ url: url });
   }
-  // const chatHistoryEl = () => {
-  //   if (state.chatHistory) {
-  //     return state.chatHistory;
-  //   } else {
-  //     return chatHistory;
-  //   }
-  // };
+
   return (
     <div className="aiagent aiagent-container mt-3 ">
       {/* Render Chat History  */}
@@ -169,7 +146,7 @@ export default function AiAgent() {
       </div>
       <div className="input-container mt-1">
         <textarea
-          onChange={(e) => setInitialQuestion(e.target.value)}
+          onChange={(e) => setMedicalQuestion(e.target.value)}
           ref={textareaRef}
           type="text"
           id="user-input"

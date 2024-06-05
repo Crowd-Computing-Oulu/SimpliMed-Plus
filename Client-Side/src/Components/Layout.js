@@ -5,7 +5,6 @@ import Header from "./Header";
 import Instructions from "./Instructions";
 import { AppContext } from "../App";
 import "./layout.css";
-import Loading from "../pages/abstracts/Loading";
 import homeBG from "../../public/images/Home-Background2.png";
 export default function Layout() {
   const { state } = React.useContext(AppContext);

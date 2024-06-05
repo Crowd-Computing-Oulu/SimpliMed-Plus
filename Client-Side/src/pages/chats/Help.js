@@ -113,13 +113,13 @@ export default function Help() {
                 Ask a new question!
               </button>
             </NavLink>
-            <button
+            {/* <button
               className="suggestion-item response-similarArticles"
               id="response-similarArticles"
               onClick={handleClick}
             >
               Explore similar articles!
-            </button>
+            </button> */}
           </div>
         )}
         {foundInfo === "yes" && (
