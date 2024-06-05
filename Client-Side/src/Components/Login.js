@@ -1,22 +1,40 @@
 /*global chrome*/
 import React from "react";
 import "./login.css";
-import { redirect, useActionData, Form, useNavigate } from "react-router-dom";
+import {
+  redirect,
+  useActionData,
+  Form,
+  useNavigate,
+  json,
+} from "react-router-dom";
 import { updateState } from "../utils";
 
 // passing down the login prop to the action
 export async function action({ request }, setState) {
   const formData = await request.formData();
-  const username = formData.get("username");
+  const openAIKey = formData.get("openAIKey");
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage(
-      { action: "loginRequest", username },
+      { action: "loginRequest", openAIKey },
       (response) => {
         if (response.response === "Login Successful") {
           updateState(setState, response.state);
+          console.log(
+            "response from  background  IN LOGIN is",
+            response.response
+          );
           resolve(redirect("/"));
         } else {
-          reject("unsuccessful login");
+          console.log(
+            "login failed on the login page",
+            response.errorMessage,
+            response.errorStatus
+          );
+          resolve(
+            json({ error: response.errorMessage, status: response.errorStatus })
+          );
+          // reject("unsuccessful login");
         }
       }
     );
@@ -24,10 +42,9 @@ export async function action({ request }, setState) {
 }
 
 export default function Login() {
-  const errorMessage = useActionData();
-  console.log("error message is", errorMessage);
+  // action data shows the error message and status for the input
+  const actionData = useActionData();
   const navigation = useNavigate();
-
   const btnSubmitting = {
     backgroundColor: "grey",
   };
@@ -41,10 +58,10 @@ export default function Login() {
         // onSubmit={handleSubmit}
       >
         <input
-          type="username"
+          type="openAIKey"
           id="username"
-          name="username"
-          placeholder="Your Username"
+          name="openAIKey"
+          placeholder="Your open AI Key"
           required
         />
         {/* Passing the new username to the app component  */}
@@ -55,6 +72,13 @@ export default function Login() {
           {navigation.state === "submitting" ? "Logging In..." : "Log in"}
         </button>
       </Form>
+      <div className="error-message text-danger">
+        {actionData ? (
+          <p>
+            {actionData.status}: {actionData.error}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }
