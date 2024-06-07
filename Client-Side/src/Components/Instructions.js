@@ -13,9 +13,8 @@ export default function Instructions() {
         different simplified versions to the users, and also help users to see
         the difficult words meaning from wikipedia on hover. and the last
         section helps users to see if they have found what they are looking for.
-        In order for simpliMed to work with openAI APIs, users need to enter
-        their OpenAI tokens. The consumptions will approximately be ... tokens
-        per abstract.
+        In order for simpliMed to work with openAI APIs, users you to enter your
+        own OpenAI tokens. See OpenAI website for more details on the price.
       </p>
 
       <div className="d-flex flex-column justify-content-center align-items-center">
