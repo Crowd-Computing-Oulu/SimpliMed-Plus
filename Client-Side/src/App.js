@@ -53,12 +53,10 @@ function App() {
     new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
         if (response.response === "TokenExist") {
-          console.log("Token exist this is response state, ", response.state);
           updateState(setState, response.state);
           resolve(redirect("/"));
         } else {
           resolve(redirect("/login"));
-          console.log("token does not exist");
         }
       });
     });
@@ -74,7 +72,6 @@ function App() {
     ) {
       if (message.action === "Tab Switched") {
         if (message.url.indexOf("pubmed.ncbi.nlm.nih.gov") > -1) {
-          console.log("user is on pubmed webpage");
           try {
             const abstractInfo = await getTabInformation(message.url);
             setAbstract(abstractInfo);

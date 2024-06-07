@@ -40,10 +40,8 @@ export function requireAuth() {
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ action: "firstOpen" }, (response) => {
       if (response.response === "NoToken") {
-        console.log("token exist, should the state be updated");
         resolve("NoToken");
       } else if (response.response === "TokenExist") {
-        console.log("token does exist, i should be redirected to layout");
         resolve("TokenExist");
       }
     });

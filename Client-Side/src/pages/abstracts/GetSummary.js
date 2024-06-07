@@ -9,25 +9,7 @@ export default function GetSummary() {
 
   const [error, setError] = React.useState("");
 
-  // async function getSummary() {
-  //   console.log("getSummary");
-  //   chrome.runtime.sendMessage(
-  //     {
-  //       action: "summaryRequest",
-  //       tabAbstract: abstract,
-  //     },
-  //     (response) => {
-  //       if (response.response === "Error") {
-  //         setError(response.error);
-  //       }
-  //       updateState(setState, response.state);
-  //     }
-  //   );
-  // }
-
   async function getSummary() {
-    console.log("getSummary");
-
     try {
       const response = await new Promise((resolve, reject) => {
         chrome.runtime.sendMessage(
@@ -76,15 +58,11 @@ export default function GetSummary() {
             >
               Go to PubMed
             </button>
-            {/* <button className="button getSummaryBtn disabledBtn">
-              No available abstract
-            </button> */}
           </div>
         );
       }
       // IF THE UESR IS ON PUBMED WEBSITE BUT NOT ON AN ARTICLE, OR THE ARTICLE DOESNT HAVE AN ABSTRACT BUT
       else if (urlStatus === "pubmedNoAbstract") {
-        console.log("pubmedNoAbstract");
         return (
           <div className="d-flex flex-column align-items-center justify-content-center">
             <p className="px-3">Open an article with available abstract.</p>

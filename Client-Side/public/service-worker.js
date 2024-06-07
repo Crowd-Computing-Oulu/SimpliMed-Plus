@@ -1,4 +1,4 @@
-import { requestSummaryy, requestKeywords } from "./backend-utils.js";
+import { requestSummary, requestKeywords } from "./backend-utils.js";
 /*global chrome*/
 
 // Allows users to open the side panel by clicking on the action toolbar icon
@@ -6,7 +6,6 @@ chrome.sidePanel
   .setPanelBehavior({ openPanelOnActionClick: true })
   .catch((error) => console.error(error));
 
-// -------------------------
 // A state should have these values overall
 
 let state = {
@@ -34,15 +33,6 @@ let state = {
         "Ask a medical question and I will find relevant keywords for you.",
     },
   ],
-  // feedback: {
-  //   text,
-  //   originalDifficulty,
-  //   advancedDifficulty,
-  //   elementaryDifficulty,
-  //   originalTime,
-  //   advancedTime,
-  //   elementaryTime,
-  // },
 };
 
 // URL CHANGE WITHIN THE SWTICHIN TAB
@@ -84,11 +74,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         });
       }
     });
-    updateStudyStatus()
-      .then(() => {})
-      .catch((error) => {
-        console.error("fetching study status failed", error);
-      });
     // To indicate that sendResponse will be called asynchronously
     return true;
   }
@@ -104,7 +89,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           chrome.storage.local.set({
             openAIKey: state.openAIKey,
           });
-          console.log("state in login request", state);
           sendResponse({
             response: "Login Successful",
             state: state,
@@ -173,7 +157,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         url: url,
         OPENAI_TOKEN: state.openAIKey,
       };
-      requestSummaryy({ body: body })
+      requestSummary({ body: body })
         .then((result) => {
           state.abstractData = {};
           state.abstractData.originalAbstract = originalAbstract;
@@ -208,7 +192,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           errorMessage: error.message,
           errorStatus: error.status,
         });
-        // console.error("Submit user initial question failed:", error);
       });
     // To indicate that sendResponse will be called asynchronously
     return true;
@@ -217,103 +200,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 // FUNCTIONS
 
-// REQUEST STUDY STATUTS AT VERY BEGINING
-// we want to see what is the phrase of the day
-async function requestStudyStatus() {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.get("accessToken", async function (data) {
-      if (data.accessToken) {
-        const accessToken = data.accessToken;
-        const options = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "JWT " + accessToken,
-          },
-          // body: JSON.stringify({
-          //   // we are sending the user authentication in server side
-          // }),
-        };
-
-        try {
-          const response = await fetch(
-            `http://localhost:8080/study/status`,
-            options
-          );
-          let responseData = await response.json();
-          if (response.status == 200) {
-            resolve(responseData);
-          } else {
-            reject({ message: responseData.message });
-          }
-        } catch (error) {
-          console.error("Error Fetching study status");
-          reject(error);
-        }
-      } else {
-        return;
-      }
-    });
-  });
-}
-
-// REQUEST ABSTRACT SUMMARIES
-async function requestSummary(abstractInfromation) {
-  const { url, originalTitle, originalAbstract } = abstractInfromation;
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.get("accessToken", async function (data) {
-      const accessToken = data.accessToken;
-      const options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "JWT " + accessToken,
-        },
-        body: JSON.stringify({
-          originalAbstract: originalAbstract,
-          originalTitle: originalTitle,
-          url: url,
-        }),
-      };
-
-      try {
-        const response = await fetch(
-          `http://localhost:8080/abstracts/abstract`,
-          options
-        );
-        let responseData = await response.json();
-        if (response.status == 200) {
-          let result = {};
-          // adding the interactionId in abstractData
-          responseData.abstract.interactionID = responseData.interactionId;
-          result.abstract = responseData.abstract;
-          result.feedback = responseData.feedback;
-          resolve(result);
-        } else {
-          reject({ message: responseData.message });
-        }
-      } catch (error) {
-        reject(error);
-      }
-    });
-  });
-}
-
-// UPDATE STUDY STATUS WITH EVERY CHANGE
-// FOR THE USER STUDY
-async function updateStudyStatus() {
-  // to check the daily phrase and the remainin daily feedbacks
-  let studyStatus = await requestStudyStatus();
-  state.numberOfDailyFeedbacks = studyStatus.dailyFeedbacks.length;
-  state.isStudyCompleted = studyStatus.isCompleted;
-  let remainingFeedbacks =
-    studyStatus.requiredFeedbacks - studyStatus.dailyFeedbacks.length;
-  state.dailyPhrase = studyStatus.dailyPhrase;
-  state.remainingFeedbacks = remainingFeedbacks;
-  return;
-}
-
-// CLEAR ACCESSTOKEN FROM THE STORAGE
+// CLEAR OPENAIKEY FROM THE STORAGE
 async function clearChromeStorage() {
   return new Promise((resolve, reject) => {
     chrome.storage.local.remove(["openAIKey"], function () {
