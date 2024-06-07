@@ -1,4 +1,4 @@
-async function requestToOpenAI(text, systemPrompt, userPrompt, OPENAI_TOKEN) {
+async function requestToOpenAI(text, OPENAI_TOKEN, systemPrompt, userPrompt) {
   const payload = {
     model: "gpt-4",
     messages: [
@@ -23,7 +23,6 @@ async function requestToOpenAI(text, systemPrompt, userPrompt, OPENAI_TOKEN) {
       },
       body: JSON.stringify(payload),
     });
-
     if (!response.ok) {
       throw new Error(`Error code: ${response.status}. ${response.statusText}`);
     }
@@ -38,7 +37,7 @@ async function requestToOpenAI(text, systemPrompt, userPrompt, OPENAI_TOKEN) {
     let result = { message: message, status: "Ok" };
     return result;
   } catch (error) {
-    console.error("Error in requestToOpenAI:", error.message);
+    console.error("Error in requestToOpenAI:", error);
     throw error;
   }
 }
@@ -99,7 +98,7 @@ async function requestToWikipedia(hardWordsJson) {
 
   return mergedDefinition;
 }
-async function requestKeywordsOpenAI(medicalQuestion) {
+async function requestKeywordsOpenAI(medicalQuestion, OPENAI_TOKEN) {
   const suggestKeywordsPrompt =
     "Generate keywords relevant to the question. Focus on terms that elucidate the relationship between the words and their topic, including related factors, mechanisms, and relevant research areas. These keywords should facilitate searching for pertinent articles on PubMed. You should provide at least 3 phrases that contains keywords relevent to the question. seperate each phrase with a comma. ";
   const systemPrompt =
@@ -108,6 +107,7 @@ async function requestKeywordsOpenAI(medicalQuestion) {
   try {
     const results = await requestToOpenAI(
       medicalQuestion,
+      OPENAI_TOKEN,
       systemPrompt,
       suggestKeywordsPrompt
     );
@@ -124,7 +124,7 @@ async function requestKeywordsOpenAI(medicalQuestion) {
   }
 }
 
-export async function requestSummaryy(req) {
+export async function requestSummary(req) {
   //   request contains the original abstract and title of the article and the token
   const systemPrompt =
     "You are an expert science communicator who understands how to simplify scientific text specifically in the medical field. You can simplify the text based on different levels of simplification. In this task, you must simplify the given text, using the user's description.";
